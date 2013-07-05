@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>{% block title %}Readbox{% endblock title %}</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <!-- Bootstrap -->
+        <link href="{{ STATIC_URL }}jquery-ui-1.10.3/themes/base/minified/jquery-ui.min.css" rel="stylesheet" media="screen">
+        <link href="{{ STATIC_URL }}bootstrap/css/bootstrap.min.css" rel="stylesheet" media="screen">
+
+        <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+        <script src="{{ STATIC_URL }}jquery-ui-1.10.3/jquery-1.9.1.js"></script>
+        <script src="{{ STATIC_URL }}jquery-ui-1.10.3/ui/jquery-ui.js"></script>
+        <script src="{{ STATIC_URL }}dropzone.js"></script>
+        {# <script src="{{ STATIC_URL }}jquery.kool-swap/js/jquery.kool-swap.js"></script> #}
+
+
+        {% block head %}
+        {% endblock head %}
+
+        <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+        <!--[if lt IE 9]>
+        <script src="{{ STATIC_URL }}assets/js/html5shiv.js"></script>
+        <script src="{{ STATIC_URL }}assets/js/respond.min.js"></script>
+        <![endif]-->
+    </head>
+    <body style="padding-bottom: 70px;">
+        <noscript>
+            <div class="alert alert-danger">Seriously? No Javascript? Half of
+                the site probably won't work so know that you have been warned
+            ;)</div>
+        </noscript>
+        {% block body %}
+        {% endblock body %}
+
+        <form id="upload_form" method="post" action="{{ url('upload') }}" class="dropzone navbar navbar-default navbar-fixed-bottom">
+            {% csrf_token %}
+        </form>
+
+
+        <!-- Include all compiled plugins (below), or include individual files as needed -->
+        <script src="{{ STATIC_URL }}bootstrap/js/bootstrap.min.js"></script>
+        <script type="text/javascript">
+            $('a').tooltip();
+
+            function setState(data, textStatus, jqXHR){
+                $.each(data.html, function(key, value){
+                    $('#' + key).html(value);
+                });
+
+                if(typeof(data.tags) != 'undefined')
+                    $('#id_tags_tags_input').importTags(data.tags);
+
+                init();
+
+                if(textStatus === 'success'){
+                    window.history.pushState(data, data.title, data.path);
+                }
+            }
+            
+            function listLoad(){
+                var $this = $(this);
+                $.getJSON(this.href, setState);
+                return false;
+            }
+            
+            function searchLoad(){
+                var $form = $('#search-form');
+                var url = '?' + $form.serialize();
+                $.getJSON(url, setState);
+                return false;
+            }
+            
+            function init(){
+                $('a.list').click(listLoad);
+                $('#breadcrumb button[data-toggle=dropdown]').click(dropdownLoad);
+                $('button.tag').click(function(){
+                    $('#id_tags_tags_input').addTag($(this).data('tag'));
+                });
+            }
+            
+            window.onpopstate = function(event){
+                setState(event.state, true);
+            }
+
+            function dropdownLoad(){
+                var dropdownMenu = $(this).siblings('ul.dropdown-menu');
+                $(this).unbind('click', dropdownLoad);
+                dropdownMenu.load(dropdownMenu.data('source'), init);
+            }
+            init();
+
+            Dropzone.options.uploadForm = {
+                parallelUploads: 2,
+                uploadMultiple: true,
+                addRemoveLinks: true,
+                dictDefaultMessage: '<span class="navbar-brand">Drop files here to upload</span>',
+                accept: function(file, done){
+                    console.log(file);
+                    //prompt('How would you like to call the new file?', file.name);
+                    file.name = 'foobar';
+                    done();
+                }
+            }
+
+        </script>
+        </body>
+</html>

@@ -1,0 +1,52 @@
+{% extends 'readbox/base.html' %}
+{% import 'readbox/macros.html' as macros %}
+
+{% block head %}
+<script type="text/javascript">
+function updateTag(){
+    searchLoad();
+}
+</script>
+{{ form.media|safe }}
+{% endblock head %}
+
+{% block body %}
+
+<div>
+    <div class="row">
+        <div class="col-xs-6" id="breadcrumb">{{ macros.breadcrumb(directory) }}</div>
+
+        <div class="col-xs-6 btn-group">
+            <button type="button" class="btn btn-xs">Current Tags</button>
+            {{ macros.tags(directory, size='btn-xs') }}
+        </div>
+    </div>
+
+    <hr>
+    <div class="row">
+        <div class="col-xs-9 btn-group">
+            <form id="search-form" role="form" class="form-inline"
+                    action="{{ url('search', directory.path) }}">
+                <div>
+                    <div class="form-group">
+                        <label>Filters:</label>
+                        {{ form.tags.as_widget() }}
+                    </div>
+                </div>
+            </form>
+
+        </div>
+        <div class="col-xs-3 btn-group pull-right">
+            <button type="button" class="btn btn-success">
+                <span class="glyphicon glyphicon-plus"></span>
+                Add New File
+            </button>
+        </div>
+    </div>
+</div>
+
+<div id="main_content">
+{{ macros.render_files(files, tags_dict=tags_dict) }}
+</div>
+
+{% endblock body %}

@@ -1,0 +1,17 @@
+{% block body %}
+
+{% if directories %}
+<li role="presentation" class="dropdown-header">Directories</li>
+{% for path, name in directories %}
+<li><a class="list" href="{{ url('list', path) }}">{{ name }}</a></li>
+{% endfor %}
+{% endif %}
+
+{% if files %}
+<li role="presentation" class="dropdown-header">Files</li>
+{% for path, name in files %}
+<li><a target="_blank" href="{{ url('download', path) }}">{{ name }}</a></li>
+{% endfor %}
+{% endif %}
+
+{% endblock body %}

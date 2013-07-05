@@ -1,0 +1,115 @@
+<li role="presentation" class="dropdown-header">Files</li>
+{% macro breadcrumb(file) %}
+<div class="btn-toolbar">
+    <div class="btn-group">
+        <button class="btn btn-xs">Current Path</button>
+    </div>
+    {%- for path, name in file.path_parts() -%}
+    <div class="btn-group">
+        <a class="btn btn-xs btn-default list" href="{{ url('list', path) }}">
+            {{ name }}
+        </a>
+        <button class="btn btn-xs btn-default list" data-toggle="dropdown">
+            <span class="caret"></span>
+        </button>
+
+        <ul class="dropdown-menu" role="menu" data-path="{{ path }}" data-source="{{ url('list_simple', path=path) }}">
+            <li role="presentation" class="dropdown-header">Directories</li>
+            <li><a href="{{ url('list', path) }}">{{ name }}</a></li>
+            <li role="presentation" class="dropdown-header">Files</li>
+        </ul>
+    </div>
+    {%- endfor %}
+</div>
+{% endmacro %}
+
+{% macro tags(file, tags_dict=None, size='btn-xs') %}
+{% for tag in file.tags.all() if tag.name not in (tags_dict or {}) %}
+<button type="button" data-tag="{{ tag }}" class="btn {{ size }} tag {{ loop.cycle('btn-primary',
+    'btn-success', 'btn-warning', 'btn-danger') }}">{{ tag }}</button>
+{% endfor %}
+{% endmacro %}
+
+{% macro render_file(file, extended=True, show_path=False, tags_dict=None) %}
+<tr class="success">
+    {% if extended %}
+{# Enable this for logs
+    <td>
+        <a title="Log" data-toggle="modal" data-target="#modal"
+            class="glyphicon glyphicon-list-alt"
+            href="{{ url('log', file.path) }}"></a>
+    </td>
+#}
+    <td>
+        <a title="Download {{ file.name }}"
+            class="glyphicon glyphicon-file" target="_blank"
+            href="{{ url('download', file.path) }}">
+    </td>
+    {% endif %}
+    <td>
+        <a title="Download {{ file.name }}" target="_blank"
+            href="{{ url('download', file.path) }}">
+            {{ file }}
+    </td>
+    <td>{{ tags(file, tags_dict=tags_dict) }}</td>
+    {% if show_path %}
+    <td>{{ file.parent_name }}</td>
+    {% endif %}
+    <td>{{ file.extension }}</td>
+</tr>
+{% endmacro %}
+
+{% macro render_directory(file, extended=True, show_path=False, tags_dict=None) %}
+<tr class="warning">
+    {% if extended %}
+{# Enable this for logs
+    <td>
+        <a title="Log" data-toggle="modal" data-target="#modal"
+            class="glyphicon glyphicon-list-alt"
+            href="{{ url('log', file.path) }}"></a>
+    </td>
+#}
+    <td>
+        <a href="{{ url('list', file.path) }}">
+            <span class="glyphicon glyphicon-folder-close"></span>
+        </a>
+    </td>
+    {% endif %}
+    <td>
+        <a class="list" href="{{ url('list', file.path) }}">
+            {{ file }}
+        </a>
+    </td>
+    <td>{{ tags(file, tags_dict=tags_dict) }}</td>
+    {% if show_path %}
+    <td>{{ file.parent_name }}</td>
+    {% endif %}
+    <td>directory</td>
+</tr>
+{% endmacro %}
+
+{% macro render_files(files, extended=True, show_path=False, tags_dict=None) %}
+<table class="table table-condensed">
+    <tr>
+        {% if extended %}
+{# Enable this for logs
+        <th style="width: 16px;"></th>
+#}
+        {% endif %}
+        <th colspan="2">Filename</th>
+        <th>Tags</th>
+        {% if show_path %}
+        <th>Path</th>
+        {% endif %}
+        <th>Type</th>
+    </tr>
+    {% for file in files if file.is_directory %}
+        {{ render_directory(file, extended, show_path, tags_dict=tags_dict) }}
+    {% endfor %}
+
+    {% for file in files if file.is_file %}
+        {{ render_file(file, extended, show_path, tags_dict=tags_dict) }}
+    {% endfor %}
+</table>
+{% endmacro %}
+

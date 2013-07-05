@@ -1,0 +1,28 @@
+{% if not request.ajax %}
+{% extends 'readbox/base.html' %}
+{% endif %}
+{% import 'readbox/macros.html' as macros %}
+
+{% block body %}
+{% if not request.ajax %}
+<h1>Revision history</h1>
+<h3>{{ macros.breadcrumb(file) }}</h3>
+{{ macros.tags(file) }}
+{% endif %}
+
+<table class="table">
+    <tr>
+        <th>Hash</th>
+        <th>Date</th>
+        <th>User</th>
+    </tr>
+    {% for revision in revisions %}
+    <tr class="alert {% if revision.deleted %}alert-danger{% else %}alert-success{% endif %}">
+        <td>{{ revision.hash }}</td>
+        <td>{{ revision.created_at }}</td>
+        <td>{{ revision.user|default('Unknown', True) }}</td>
+    </tr>
+    {% endfor %}
+</table>
+
+{% endblock body %}
