@@ -43,13 +43,15 @@
             $('a').tooltip();
 
             function setState(data, textStatus, jqXHR){
-                $.each(data.html, function(key, value){
-                    $('#' + key).html(value);
-                });
+                if(data){
+                    $.each(data.html, function(key, value){
+                        $('#' + key).html(value);
+                    });
 
-                if(typeof(data.tags) != 'undefined')
-                    $('#id_tags_tags_input').importTags(data.tags);
-
+                    if(typeof(data.tags) != 'undefined'){
+                        $('#id_tags_tags_input').importTags(data.tags);
+                    }
+                }
                 init();
 
                 if(textStatus === 'success'){
