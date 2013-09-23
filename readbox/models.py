@@ -16,9 +16,10 @@ class TagType(base_models.SlugMixin, base_models.CreatedAtModelBase):
 
 class Tag(base_models.NameMixin, base_models.CreatedAtModelBase):
     name = models.CharField(max_length=64)
+    type = models.ForeignKey(TagType, related_name='tags')
 
     class Meta:
-        unique_together = 'name',
+        unique_together = 'name', 'type'
 
 
 class Revision(base_models.NameMixin, base_models.ModelBase):
@@ -107,7 +108,7 @@ class File(base_models.NameMixin, base_models.ModelBase):
         choices=Source.choices,
         default=Source.dropbox,
     )
-    tags = models.ManyToManyField(Tag)
+    tags = models.ManyToManyField(Tag, related_name='files')
     pattern = models.ForeignKey(FilePattern, null=True, blank=True)
 
     updated_at = models.DateTimeField()
@@ -199,6 +200,7 @@ class File(base_models.NameMixin, base_models.ModelBase):
 
     class Meta:
         unique_together = 'path',
+        ordering = ['path']
 
 
 class Permission(base_models.CreatedAtModelBase):
