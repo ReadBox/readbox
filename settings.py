@@ -70,7 +70,7 @@ STATIC_ROOT = 'static/'
 
 # URL prefix for static files.
 # Example: "http://example.com/static/", "http://static.example.com/"
-STATIC_URL = 'http://readbox/static/'
+STATIC_URL = 'http://readbox.wol.ph/static/'
 
 # Additional locations of static files
 STATICFILES_DIRS = (
@@ -256,7 +256,7 @@ DJANGO_UTILS_USE_JINJA = True
 TAGS_INPUT_MAPPINGS = {
     'readbox.Tag': {
         'field': 'name',
-        'create_missing': True,
+        'create_missing': False,
     }
 }
 
