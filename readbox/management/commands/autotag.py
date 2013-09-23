@@ -19,6 +19,7 @@ class Command(base_command.CustomBaseCommand):
         self.handle_main_directory()
 
     def get_tag(self, tags, type_, name):
+        name = name.strip()
         tag = tags.get(name)
         if not tag:
             tag = tags[name] = models.Tag.objects.create(
@@ -28,6 +29,7 @@ class Command(base_command.CustomBaseCommand):
         return tag
 
     def get_tag_type(self, name):
+        name = name.strip()
         if name not in self.tag_types:
             self.tag_types[name] = models.TagType.objects.create(name=name)
         return self.tag_types[name]
