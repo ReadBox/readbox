@@ -9,6 +9,5 @@ urlpatterns = patterns(
     url(r'^list(?P<path>/.*/)$', 'list_', name='list'),
     url(r'^list_simple(?P<path>/.*/)$', 'list_simple', name='list_simple'),
     url(r'^tags(?P<path>/.*/)$', 'tags', name='tags'),
-    url(r'^search(?P<path>/.*/)$', 'search', name='search'),
 )
 

@@ -27,30 +27,6 @@ def index(request):
 
 @view_decorators.env
 @path_decorator
-def search(request, directory):
-    form = forms.SearchForm(request.GET or None)
-    files = []
-    if form.is_valid():
-        files = directory.all_files().filter(
-            tags__in=form.cleaned_data['tags'],
-        )[:100]
-
-    if request.ajax:
-        context = dict()
-        macros = common.env.get_template('readbox/macros.html')
-        context['path'] = request.get_full_path()
-        context['html'] = dict(
-            main_content=macros.module.render_files(files),
-        )
-        return context
-    else:
-        request.context['form'] = form
-        request.context['files'] = files
-        request.context['directory'] = directory
-
-
-@view_decorators.env
-@path_decorator
 def list_(request, directory):
     data = request.GET or None
     tags = directory.tags.all()
@@ -61,7 +37,7 @@ def list_(request, directory):
     if form.is_valid():
         files = directory.all_files().filter(
             tags__in=form.cleaned_data['tags'],
-        )
+        ).distinct()
     else:
         files = directory.children.visible()
     files = files.prefetch_related('tags')[:100]
