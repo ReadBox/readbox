@@ -12,7 +12,7 @@ class Command(base_command.CustomBaseCommand):
         base_command.CustomBaseCommand.handle(self, *args, **kwargs)
 
         self.tag_types = dict(
-            (t.name, t) for t in 
+            (t.name, t) for t in
             models.TagType.objects.all()
         )
 
@@ -27,6 +27,11 @@ class Command(base_command.CustomBaseCommand):
             )
         return tag
 
+    def get_tag_type(self, name):
+        if name not in self.tag_types:
+            self.tag_types[name] = models.TagType.objects.create(name=name)
+        return self.tag_types[name]
+
     def add_recursive(self, tag, directory):
         tag.files.add(*models.File.objects.filter(
             path__istartswith=directory.path))
@@ -34,7 +39,7 @@ class Command(base_command.CustomBaseCommand):
     def handle_main_directory(self):
         main = models.File.objects.get(path=settings.DROPBOX_BASE_PATH)
 
-        tag_type = self.tag_types['Year']
+        tag_type = self.get_tag_type('Year')
         tags = dict((t.name, t) for t in tag_type.tags.all())
         for directory in main.children.all_directories():
             match = re.search('\(([a-zA-Z]+ jaar)\)', directory.name)
@@ -45,9 +50,9 @@ class Command(base_command.CustomBaseCommand):
                 self.handle_year_directory(directory)
 
     def handle_year_directory(self, year):
-        code_type = self.tag_types['Class Code']
-        name_type = self.tag_types['Class Name']
-        quarter_type = self.tag_types['Quarter']
+        code_type = self.get_tag_type('Class Code')
+        name_type = self.get_tag_type('Class Name')
+        quarter_type = self.get_tag_type('Quarter')
         code_tags = dict((t.name, t) for t in code_type.tags.all())
         name_tags = dict((t.name, t) for t in name_type.tags.all())
         quarter_tags = dict((t.name, t) for t in quarter_type.tags.all())
