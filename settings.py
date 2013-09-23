@@ -206,18 +206,8 @@ LOGGING = {
     }
 }
 
-if not DEBUG:
-    # Set your DSN value
-    RAVEN_CONFIG = {
-        'dsn': None,
-    }
-
-    # Add raven to the list of installed apps
-    INSTALLED_APPS = INSTALLED_APPS + (
-        'raven.contrib.django.raven_compat',
-    )
-
 if 'runserver' in sys.argv:
+    DEBUG = TEMPLATE_DEBUG = True
     DEVSERVER_DEFAULT_PORT = 8080
     MIDDLEWARE_CLASSES += (
         'debug_toolbar.middleware.DebugToolbarMiddleware',
@@ -253,6 +243,17 @@ if 'runserver' in sys.argv:
         #'TAG': 'div',
         #'ENABLE_STACKTRACES' : True,
     }
+
+else:
+    # Set your DSN value
+    RAVEN_CONFIG = {
+        'dsn': None,
+    }
+
+    # Add raven to the list of installed apps
+    INSTALLED_APPS = INSTALLED_APPS + (
+        'raven.contrib.django.raven_compat',
+    )
 
 # Your dropbox settings, you need to get these from the Dropbox site after
 # creating an app: https://www.dropbox.com/developers/apps/create
