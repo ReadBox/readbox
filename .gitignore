@@ -1,3 +1,4 @@
 .*
 static/*
 dropbox_session.pickle
+local_settings.py

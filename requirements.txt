@@ -19,7 +19,6 @@ django-facebook==5.2.6
 django-oauth2-provider==0.2.6
 django-selectable==0.7.0
 django-shell-ipynb==0.2.0
-django-statsd-toolbar==0.1.2
 django-tags-input==1.8.1
 django-tastypie==0.9.15
 docutils==0.10
