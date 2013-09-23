@@ -2,7 +2,7 @@
 import os
 import sys
 
-DEBUG = True
+DEBUG = False
 TEMPLATE_DEBUG = DEBUG
 
 ADMINS = (
@@ -28,7 +28,7 @@ DATABASES = {
 
 # Hosts/domain names that are valid for this site; required if DEBUG is False
 # See https://docs.djangoproject.com/en/1.5/ref/settings/#allowed-hosts
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['readbox.wol.ph']
 
 # Local time zone for this installation. Choices can be found here:
 # http://en.wikipedia.org/wiki/List_of_tz_zones_by_name
@@ -205,6 +205,17 @@ LOGGING = {
         },
     }
 }
+
+if not DEBUG:
+    # Set your DSN value
+    RAVEN_CONFIG = {
+        'dsn': None,
+    }
+
+    # Add raven to the list of installed apps
+    INSTALLED_APPS = INSTALLED_APPS + (
+        'raven.contrib.django.raven_compat',
+    )
 
 if 'runserver' in sys.argv:
     DEVSERVER_DEFAULT_PORT = 8080
