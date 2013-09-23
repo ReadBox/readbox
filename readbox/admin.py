@@ -12,7 +12,7 @@ class RevisionInlineAdmin(admin.TabularInline):
 
 class FileAdmin(tags_input_admin.TagsInputAdmin):
     date_hierarchy = 'created_at'
-    list_display = (u'id', 'path', 'hash', 'size', 'type', 'source',
+    list_display = (u'id', 'name', 'path', 'hash', 'size', 'type', 'source',
                     'updated_at', 'created_at', 'deleted_at')
     list_filter = ('updated_at', 'created_at', 'deleted_at', 'type', 'source')
     raw_id_fields = ('parent',)
