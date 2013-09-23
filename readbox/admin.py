@@ -55,9 +55,10 @@ class PatternAdmin(admin.ModelAdmin):
 
 class TagAdmin(admin.ModelAdmin):
     date_hierarchy = 'created_at'
-    list_display = (u'id', 'updated_at', 'created_at', 'name')
-    list_filter = ('updated_at', 'created_at')
+    list_display = (u'id', 'updated_at', 'created_at', 'name', 'type')
+    list_filter = ('updated_at', 'created_at', 'type')
     search_fields = ('name',)
+
 
 
 class TagTypeAdmin(admin.ModelAdmin):
