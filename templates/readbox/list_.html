@@ -15,16 +15,13 @@ function updateTag(){
 <div>
     <div class="row">
         <div class="col-xs-6" id="breadcrumb">{{ macros.breadcrumb(directory) }}</div>
-
+{#
         <div class="col-xs-6 btn-group">
             <button type="button" class="btn btn-xs">Current Tags</button>
             {{ macros.tags(directory, size='btn-xs') }}
         </div>
-    </div>
-
-    <hr>
-    <div class="row">
-        <div class="col-xs-9 btn-group">
+#}
+        <div class="col-xs-6 btn-group">
             <form id="search-form" role="form" class="form-inline"
                     action="{{ request.path }}">
                 <div>
@@ -34,13 +31,6 @@ function updateTag(){
                     </div>
                 </div>
             </form>
-
-        </div>
-        <div class="col-xs-3 btn-group pull-right">
-            <button type="button" class="btn btn-success">
-                <span class="glyphicon glyphicon-plus"></span>
-                Add New File
-            </button>
         </div>
     </div>
 </div>
