@@ -9,6 +9,10 @@ ADMINS = (
     # ('Your Name', 'your_email@example.com'),
 )
 
+INTERNAL_IPS = (
+    '127.0.0.1',
+)
+
 MANAGERS = ADMINS
 
 DATABASES = {
@@ -211,9 +215,6 @@ if 'runserver' in sys.argv:
     DEVSERVER_DEFAULT_PORT = 8080
     MIDDLEWARE_CLASSES += (
         'debug_toolbar.middleware.DebugToolbarMiddleware',
-    )
-    INTERNAL_IPS = (
-        '127.0.0.1',
     )
     DEBUG_TOOLBAR_PANELS = (
         'debug_toolbar.panels.version.VersionDebugPanel',
