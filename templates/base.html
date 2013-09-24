@@ -56,7 +56,6 @@
                         $('#id_tags_tags_input').importTags(data.tags);
                     }
                 }
-                init();
 
                 if(textStatus === 'success'){
                     window.history.pushState(data, data.title, data.path);
@@ -77,23 +76,34 @@
             }
             
             function init(){
-                $('a.list').click(listLoad);
-                $('#breadcrumb button[data-toggle=dropdown]').click(dropdownLoad);
-                $('button.tag').click(function(){
+                // $('a.list').click(listLoad);
+                // $('#breadcrumb button[data-toggle=dropdown]').click(dropdownLoad);
+                // $('button.tag').click(function(){
+                //     $('#id_tags_tags_input').addTag($(this).data('tag'));
+                // });
+                
+                $(document).on('click', 'a.list', listLoad)
+                $(document).on('click', 'button.tag', function(){
                     $('#id_tags_tags_input').addTag($(this).data('tag'));
                 });
+                $('#breadcrumb').on('click', 'button[data-toggle=dropdown]',
+                    dropdownLoad);
             }
-            
+            init();
+
             window.onpopstate = function(event){
                 setState(event.state, true);
             }
 
             function dropdownLoad(){
-                var dropdownMenu = $(this).siblings('ul.dropdown-menu');
-                $(this).unbind('click', dropdownLoad);
-                dropdownMenu.load(dropdownMenu.data('source'), init);
+                var $this = $(this);
+                if(!$this.data('loaded')){
+                    $this.data('loaded', true);
+                    var dropdownMenu = $this.siblings('ul.dropdown-menu');
+                    $this.unbind('click', dropdownLoad);
+                    dropdownMenu.load(dropdownMenu.data('source'));
+                }
             }
-            init();
 
             Dropzone.options.uploadForm = {
                 parallelUploads: 2,
