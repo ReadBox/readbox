@@ -1,15 +1,12 @@
 <li role="presentation" class="dropdown-header">Files</li>
 {% macro breadcrumb(file) %}
 <div class="btn-toolbar">
-    <div class="btn-group">
-        <button class="btn btn-xs">Current Path</button>
-    </div>
     {%- for path, name in file.path_parts() -%}
     <div class="btn-group">
-        <a class="btn btn-xs btn-default list" href="{{ url('list', path) }}">
+        <a class="btn btn-sm btn-default list" href="{{ url('list', path) }}">
             {{ name }}
         </a>
-        <button class="btn btn-xs btn-default list" data-toggle="dropdown">
+        <button class="btn btn-sm btn-default list" data-toggle="dropdown">
             <span class="caret"></span>
         </button>
 
