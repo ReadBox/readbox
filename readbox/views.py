@@ -35,9 +35,9 @@ def list_(request, directory):
 
     files = []
     if form.is_valid():
-        files = directory.all_files().filter(
-            tags__in=form.cleaned_data['tags'],
-        ).distinct()
+        files = directory.all_files().distinct()
+        for tag in form.cleaned_data['tags']:
+            files = files.filter(tags=tag)
     else:
         files = directory.children.visible()
     files = files.prefetch_related('tags')[:100]
