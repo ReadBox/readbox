@@ -47,7 +47,7 @@ def list_(request, directory):
         macros = common.env.get_template('readbox/macros.html')
 
         context['html']['main_content'] = macros.module.render_files(
-            files, tags_dict)
+            files, tags_dict=tags_dict)
 
         if not form.is_valid():
             context['html']['breadcrumb'] = macros.module.breadcrumb(
