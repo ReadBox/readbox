@@ -52,8 +52,11 @@ def list_(request, directory):
         if not form.is_valid():
             context['html']['breadcrumb'] = macros.module.breadcrumb(
                 directory)
-            context['html']['tags'] = macros.module.tags(directory)
 
+        if not request.GET:
+            context['tags'] = ''
+
+        context['html']['tags'] = macros.module.tags(directory)
         context['path'] = request.get_full_path()
         context['title'] = unicode(directory)
 
