@@ -1,11 +1,13 @@
 <li role="presentation" class="dropdown-header">Files</li>
 {% macro breadcrumb(file) %}
 <div class="btn-toolbar">
-    {%- for path, name in file.path_parts() -%}
+    {%- for path, name, is_base_path in file.path_parts() -%}
     <div class="btn-group">
         <a class="btn btn-sm btn-default list" href="{{ url('list', path) }}">
             {{ name }}
         </a>
+
+        {% if not is_base_path %}
         <button class="btn btn-sm btn-default list" data-toggle="dropdown">
             <span class="caret"></span>
         </button>
@@ -15,6 +17,7 @@
             <li><a href="{{ url('list', path) }}">{{ name }}</a></li>
             <li role="presentation" class="dropdown-header">Files</li>
         </ul>
+        {% endif %}
     </div>
     {%- endfor %}
 </div>

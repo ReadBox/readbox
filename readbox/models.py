@@ -129,11 +129,12 @@ class File(base_models.NameMixin, base_models.ModelBase):
         return self.all_children().filter(type=File.Type.file)
 
     def path_parts(self):
+        base_path = settings.DROPBOX_BASE_PATH
         path_parts = self.path.split('/')
         for i in range(1, len(path_parts)):
             path = '/%s/' % os.path.join(*path_parts[:i])
-            if path.startswith(settings.DROPBOX_BASE_PATH):
-                yield path, path_parts[i - 1]
+            if path.startswith(base_path):
+                yield path, path_parts[i - 1], path == base_path
 
     @property
     def extension(self):
