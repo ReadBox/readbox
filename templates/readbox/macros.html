@@ -32,20 +32,11 @@
 
 {% macro render_file(file, extended=True, show_path=False, tags_dict=None) %}
 <tr class="success">
-    {% if extended %}
-{# Enable this for logs
-    <td>
-        <a title="Log" data-toggle="modal" data-target="#modal"
-            class="glyphicon glyphicon-list-alt"
-            href="{{ url('log', file.path) }}"></a>
-    </td>
-#}
     <td>
         <a title="Download {{ file.name }}"
             class="glyphicon glyphicon-file" target="_blank"
             href="{{ url('download', file.path) }}">
     </td>
-    {% endif %}
     <td>
         <a title="Download {{ file.name }}" target="_blank"
             href="{{ url('download', file.path) }}">
@@ -62,20 +53,11 @@
 
 {% macro render_directory(file, extended=True, show_path=False, tags_dict=None) %}
 <tr class="warning">
-    {% if extended %}
-{# Enable this for logs
-    <td>
-        <a title="Log" data-toggle="modal" data-target="#modal"
-            class="glyphicon glyphicon-list-alt"
-            href="{{ url('log', file.path) }}"></a>
-    </td>
-#}
     <td>
         <a href="{{ url('list', file.path) }}">
             <span class="glyphicon glyphicon-folder-close"></span>
         </a>
     </td>
-    {% endif %}
     <td>
         <a class="list" href="{{ url('list', file.path) }}">
             {{ file }}
@@ -93,11 +75,6 @@
 {% macro render_files(files, extended=True, show_path=False, tags_dict=None) %}
 <table class="table table-condensed">
     <tr>
-        {% if extended %}
-{# Enable this for logs
-        <th style="width: 16px;"></th>
-#}
-        {% endif %}
         <th colspan="2">Filename</th>
         <th>Size</th>
         <th>Tags</th>
