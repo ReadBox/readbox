@@ -2,6 +2,7 @@ import os
 from django.db import models
 from django_utils import base_models, choices
 from django.conf import settings
+import denorm
 
 
 class TagType(base_models.SlugMixin, base_models.CreatedAtModelBase):
@@ -101,6 +102,7 @@ class File(base_models.NameMixin, base_models.ModelBase):
     parent = models.ForeignKey(
         'File', blank=True, null=True, related_name='children')
     path = models.CharField(max_length=1024)
+    name = models.CharField(max_length=256)
     hash = models.CharField(max_length=256)
     size = models.IntegerField()
     type = models.CharField(max_length=1, choices=Type.choices)
@@ -110,6 +112,7 @@ class File(base_models.NameMixin, base_models.ModelBase):
     )
     tags = models.ManyToManyField(Tag, related_name='files')
     pattern = models.ForeignKey(FilePattern, null=True, blank=True)
+    child_count = denorm.CountField('children')
 
     updated_at = models.DateTimeField()
     created_at = models.DateTimeField()
@@ -174,10 +177,6 @@ class File(base_models.NameMixin, base_models.ModelBase):
     def parent_name(self):
         return os.path.split(os.path.split(self.path.rstrip('/'))[0])[-1]
 
-    @property
-    def name(self):
-        return os.path.split(self.path.rstrip('/'))[-1]
-
     def get_revision(self):
         return self.revision_set.filter(deleted__isnull=True)[0]
 
@@ -188,6 +187,9 @@ class File(base_models.NameMixin, base_models.ModelBase):
         # return trailing slashes.
         if self.is_directory and not self.path.endswith('/'):
             self.path += '/'
+
+        # Make sure we also store the name without the path
+        self.name = os.path.split(self.path.rstrip('/'))[-1]
 
         if not self.pk:
             return super(File, self).save(*args, **kwargs)

@@ -111,6 +111,7 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.messages.middleware.MessageMiddleware',
     # Uncomment the next line for simple clickjacking protection:
     # 'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'denorm.middleware.DenormMiddleware',
 )
 
 #TEMPLATE_CONTEXT_PROCESSORS = (
@@ -151,6 +152,7 @@ INSTALLED_APPS = (
     'tags_input',
     'sorl.thumbnail',
     'django_shell_ipynb',
+    'denorm',
 )
 
 # A sample logging configuration. The only tangible logging
