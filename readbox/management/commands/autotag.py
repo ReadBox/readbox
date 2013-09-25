@@ -22,10 +22,16 @@ class Command(base_command.CustomBaseCommand):
         name = name.strip()
         tag = tags.get(name)
         if not tag:
-            tag = tags[name] = models.Tag.objects.create(
-                type=type_,
-                name=name,
-            )
+            tag = tags.get(name.lower())
+
+        if not tag:
+            try:
+                tag = tags[name] = models.Tag.objects.create(
+                    type=type_,
+                    name=name,
+                )
+            except Exception, e:
+                print 'Unable to add tag %r because: %r' % (name, e)
         return tag
 
     def get_tag_type(self, name):
@@ -35,14 +41,15 @@ class Command(base_command.CustomBaseCommand):
         return self.tag_types[name]
 
     def add_recursive(self, tag, directory):
-        tag.files.add(*models.File.objects.filter(
-            path__istartswith=directory.path))
+        if tag:
+            tag.files.add(*models.File.objects.filter(
+                path__istartswith=directory.path))
 
     def handle_main_directory(self):
         main = models.File.objects.get(path=settings.DROPBOX_BASE_PATH)
 
         tag_type = self.get_tag_type('Year')
-        tags = dict((t.name, t) for t in tag_type.tags.all())
+        tags = tag_type.tags_dict()
         for directory in main.children.all_directories():
             match = re.search('\(([a-zA-Z]+ jaar)\)', directory.name)
             if match:
@@ -55,9 +62,9 @@ class Command(base_command.CustomBaseCommand):
         code_type = self.get_tag_type('Class Code')
         name_type = self.get_tag_type('Class Name')
         quarter_type = self.get_tag_type('Quarter')
-        code_tags = dict((t.name, t) for t in code_type.tags.all())
-        name_tags = dict((t.name, t) for t in name_type.tags.all())
-        quarter_tags = dict((t.name, t) for t in quarter_type.tags.all())
+        code_tags = code_type.tags_dict()
+        name_tags = name_type.tags_dict()
+        quarter_tags = quarter_type.tags_dict()
 
         for directory in year.children.all_directories():
             match = re.match(
@@ -79,4 +86,18 @@ class Command(base_command.CustomBaseCommand):
                 if quarter:
                     tag = self.get_tag(quarter_tags, quarter_type, quarter)
                 self.add_recursive(tag, directory)
+
+                self.handle_sub_directory(directory)
+
+    def handle_sub_directory(self, sub_directory):
+        print 'Processing sub directory %r: %s' % (
+                sub_directory, sub_directory.path)
+
+        tag_type = self.get_tag_type('Directory')
+        tags = models.Tag.as_dict()
+
+        for directory in sub_directory.children.all_directories():
+            tag = self.get_tag(tags, tag_type, directory.name)
+            self.add_recursive(tag, directory)
+            self.handle_sub_directory(directory)
 
