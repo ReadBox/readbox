@@ -10,7 +10,6 @@
         <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
         <script src="{{ STATIC_URL }}jquery-ui-1.10.3/jquery-1.9.1.js"></script>
         <script src="{{ STATIC_URL }}jquery-ui-1.10.3/ui/jquery-ui.js"></script>
-        <script src="{{ STATIC_URL }}dropzone.js"></script>
         {# <script src="{{ STATIC_URL }}jquery.kool-swap/js/jquery.kool-swap.js"></script> #}
 
 
@@ -37,11 +36,6 @@
 
         {% block body %}
         {% endblock body %}
-
-        <form id="upload_form" method="post" action="{{ url('upload') }}" class="dropzone navbar navbar-default navbar-fixed-bottom">
-            {% csrf_token %}
-        </form>
-
 
         <!-- Include all compiled plugins (below), or include individual files as needed -->
         <script src="{{ STATIC_URL }}bootstrap/js/bootstrap.min.js"></script>
@@ -78,12 +72,6 @@
             }
             
             function init(){
-                // $('a.list').click(listLoad);
-                // $('#breadcrumb button[data-toggle=dropdown]').click(dropdownLoad);
-                // $('button.tag').click(function(){
-                //     $('#id_tags_tags_input').addTag($(this).data('tag'));
-                // });
-                
                 $(document).on('click', 'a.list', listLoad)
                 $(document).on('click', 'button.tag', function(){
                     $('#id_tags_tags_input').addTag($(this).data('tag'));
@@ -106,20 +94,6 @@
                     dropdownMenu.load(dropdownMenu.data('source'));
                 }
             }
-
-            Dropzone.options.uploadForm = {
-                parallelUploads: 2,
-                uploadMultiple: true,
-                addRemoveLinks: true,
-                dictDefaultMessage: '<span class="navbar-brand">Drop files here to upload</span>',
-                accept: function(file, done){
-                    console.log(file);
-                    //prompt('How would you like to call the new file?', file.name);
-                    file.name = 'foobar';
-                    done();
-                }
-            }
-
         </script>
         </body>
 </html>
