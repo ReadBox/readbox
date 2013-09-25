@@ -45,7 +45,7 @@
     <td><sub>{{ file.size|filesizeformat }}</sub></td>
     <td>{{ tags(file, tags_dict=tags_dict) }}</td>
     {% if show_path %}
-    <td>{{ file.parent_name }}</td>
+    <td>{{ file.parent_name.replace(show_path, '') }}</td>
     {% endif %}
     <td>{{ file.extension }}</td>
 </tr>
@@ -66,7 +66,7 @@
     <td><sub>{{ file.child_count }} files</sub></td>
     <td>{{ tags(file, tags_dict=tags_dict) }}</td>
     {% if show_path %}
-    <td>{{ file.parent_name }}</td>
+    <td>{{ file.parent_name.replace(show_path, '') }}</td>
     {% endif %}
     <td>directory</td>
 </tr>
