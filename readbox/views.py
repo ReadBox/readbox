@@ -25,7 +25,7 @@ def index(request):
     return request.redirect('list', settings.DROPBOX_BASE_PATH)
 
 
-@view_decorators.env
+@view_decorators.env(login_required=True)
 @path_decorator
 def list_(request, directory):
     data = request.GET or None
@@ -90,25 +90,18 @@ def list_simple(request, path):
     request.context['directories'] = directories
 
 
-@view_decorators.env
+@view_decorators.env(login_required=True)
 def tags(request, tags):
     pass
 
 
-@view_decorators.env
+@view_decorators.env(login_required=True)
 @path_decorator
 def download(request, file_):
     return request.redirect(file_.get_link())
 
 
-@view_decorators.env
-@path_decorator
-def log(request, file_):
-    request.context['file'] = file_
-    request.context['revisions'] = file_.revisions.all()
-
-
-@view_decorators.env
+@view_decorators.env(login_required=True)
 def upload(request):
     pass
 
