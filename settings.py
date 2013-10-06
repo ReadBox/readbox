@@ -132,7 +132,7 @@ TEMPLATE_DIRS = (
 )
 
 INSTALLED_APPS = (
-    'django.contrib.auth',
+    #'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.sites',
@@ -153,7 +153,18 @@ INSTALLED_APPS = (
     'sorl.thumbnail',
     'django_shell_ipynb',
     'denorm',
+    'auth',
+    'crispy_forms',
 )
+
+AUTH_USER_MODEL = 'auth.User'
+ACCOUNT_ACTIVATION_DAYS = 7
+AUTH_USER_EMAIL_DOMAIN = 'student.tudelft.nl'
+LOGIN_URL = 'login'
+LOGIN_REDIRECT_URL = 'index'
+LOGOUT_URL = 'logout'
+
+CRISPY_TEMPLATE_PACK = 'bootstrap3'
 
 # A sample logging configuration. The only tangible logging
 # performed by this configuration is to send an email to
@@ -166,7 +177,7 @@ LOGGING = {
     'formatters': {
         'verbose': {
             'format': '%(levelname)s %(asctime)s %(module)s %(process)d '
-                '%(thread)d %(message)s'
+            '%(thread)d %(message)s'
         },
         'simple': {
             'format': '%(levelname)s %(message)s'
@@ -182,7 +193,7 @@ LOGGING = {
             'level': 'DEBUG',
             'class': 'logging.NullHandler',
         },
-        'console':{
+        'console': {
             'level': 'DEBUG',
             'class': 'logging.StreamHandler',
             'formatter': 'simple'
@@ -280,4 +291,33 @@ if os.path.isfile('local_settings.py'):
 
 import monkeypatches
 monkeypatches.patch()
+
+# Debug stuff
+if DEBUG:
+    import re
+    import pprint
+    import inspect
+
+    pf = pprint.pformat
+
+    def pp(*args, **kwargs):
+        '''PrettyPrint function that prints both the variable name and data'''
+        name = None
+        for line in inspect.getframeinfo(inspect.currentframe().f_back)[3]:
+            m = re.search(r'\bpp\s*\(\s*([A-Za-z_][A-Za-z0-9_]*)\s*\)', line)
+            if m:
+                name = m.group(1)
+                break
+
+        if name:
+            print '# %s:' % name
+        pprint.pprint(*args, **kwargs)
+
+else:
+    pf = lambda *a, **kw: ''
+    pp = lambda *a, **kw: None
+
+import __builtin__
+__builtin__.pf = pf
+__builtin__.pp = pp
 
