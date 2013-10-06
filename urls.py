@@ -11,6 +11,7 @@ urlpatterns = patterns(
     # url(r'^$', 'readbox.views.home', name='home'),
     url(r'^$', 'readbox.views.index'),
     url(r'^readbox/', include('readbox.urls')),
+    url(r'^auth/', include('auth.urls')),
     url(r'^api/', include(api.api.urls)),
     url(r'^tags_input/', include('tags_input.urls', namespace='tags_input')),
 
