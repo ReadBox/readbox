@@ -42,12 +42,17 @@ def list_(request, directory):
         files = directory.children.visible()
     files = files.prefetch_related('tags')[:100]
 
+    if request.GET:
+        show_path = directory.path
+    else:
+        show_path = False
+
     if request.ajax:
         context = dict(html=dict())
         macros = common.env.get_template('readbox/macros.html')
 
         context['html']['main_content'] = macros.module.render_files(
-            files, tags_dict=tags_dict)
+            files, tags_dict=tags_dict, show_path=show_path)
 
         if not form.is_valid():
             context['html']['breadcrumb'] = macros.module.breadcrumb(
@@ -67,6 +72,7 @@ def list_(request, directory):
         request.context['form'] = form
         request.context['tags'] = tags
         request.context['tags_dict'] = tags_dict
+        request.context['show_path'] = show_path
 
 
 @view_decorators.env

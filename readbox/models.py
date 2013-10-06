@@ -11,6 +11,13 @@ class TagType(base_models.SlugMixin, base_models.CreatedAtModelBase):
     description = models.TextField(blank=True, null=True)
     color = models.IntegerField(blank=True, null=True)
 
+    def tags_dict(self):
+        tags = dict()
+        for tag in self.tags.all():
+            tags[tag.name] = tag
+            tags[tag.name.lower()] = tag
+        return tags
+
     class Meta(base_models.SlugMixin.Meta):
         pass
 
@@ -18,6 +25,14 @@ class TagType(base_models.SlugMixin, base_models.CreatedAtModelBase):
 class Tag(base_models.NameMixin, base_models.CreatedAtModelBase):
     name = models.CharField(max_length=64)
     type = models.ForeignKey(TagType, related_name='tags')
+
+    @classmethod
+    def as_dict(self):
+        tags = dict()
+        for tag in self.objects.all():
+            tags[tag.name] = tag
+            tags[tag.name.lower()] = tag
+        return tags
 
     class Meta:
         unique_together = 'name', 'type'

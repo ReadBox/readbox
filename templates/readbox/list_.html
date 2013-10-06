@@ -26,7 +26,7 @@ function updateTag(){
                     action="{{ request.path }}">
                 <div>
                     <div class="form-group">
-                        <label>Filters:</label>
+                        <label>Search:</label>
                         {{ form.tags.as_widget() }}
                     </div>
                 </div>
@@ -36,7 +36,11 @@ function updateTag(){
 </div>
 
 <div id="main_content">
+{% if request.GET %}
+{{ macros.render_files(files, tags_dict=tags_dict, show_path=directory.path) }}
+{% else %}
 {{ macros.render_files(files, tags_dict=tags_dict) }}
+{% endif %}
 </div>
 
 {% endblock body %}
