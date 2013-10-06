@@ -23,6 +23,17 @@
         <![endif]-->
     </head>
     <body style="padding-bottom: 70px;">
+        <nav class="navbar navbar-default" role="navigation">
+            <div class="navbar-header">
+                <a class="navbar-brand" href="{{ url('index') }}">Readbox</a>
+            </div>
+            {% if user.is_authenticated %}
+            <button type="button" href="{{ url('logout') }}" class="btn btn-default navbar-btn">Logout {{ user }}</button>
+            {% else %}
+            <button type="button" href="{{ url('login') }}" class="btn btn-default navbar-btn">Login</button>
+            {% endif %}
+        </nav>
+
         <noscript>
             <div class="alert alert-danger">Seriously? No Javascript? Half of
                 the site probably won't work so know that you have been warned
