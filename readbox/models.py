@@ -29,7 +29,7 @@ class Revision(base_models.NameMixin, base_models.ModelBase):
     hash = models.CharField(max_length=256)
     deleted = models.BooleanField(default=False)
     created_at = models.DateTimeField()
-    user = models.ForeignKey('auth.User', blank=True, null=True)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, blank=True, null=True)
 
     @property
     def name(self):
@@ -207,7 +207,7 @@ class File(base_models.NameMixin, base_models.ModelBase):
 
 
 class Permission(base_models.CreatedAtModelBase):
-    user = models.ForeignKey('auth.User')
+    user = models.ForeignKey(settings.AUTH_USER_MODEL)
     read = models.BooleanField()
     rename = models.BooleanField()
     update = models.BooleanField()
