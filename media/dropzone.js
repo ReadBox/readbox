@@ -1368,7 +1368,7 @@ require.register("dropzone/lib/dropzone.js", function(exports, require, module){
       headers = {
         "Accept": "application/json",
         "Cache-Control": "no-cache",
-        "X-Requested-With": "XMLHttpRequest"
+        "X-Requested-With": "XMLHttpRequest",
       };
       if (this.options.headers) {
         extend(headers, this.options.headers);
@@ -1405,7 +1405,8 @@ require.register("dropzone/lib/dropzone.js", function(exports, require, module){
       }
       for (_l = 0, _len3 = files.length; _l < _len3; _l++) {
         file = files[_l];
-        formData.append("" + this.options.paramName + (this.options.uploadMultiple ? "[]" : ""), file, file.name);
+        formData.append("" + this.options.paramName + (this.options.uploadMultiple ? "[]" : ""), file, file.full_name);
+        formData.append("" + this.options.paramName + '_name' + (this.options.uploadMultiple ? "[]" : ""), file.full_name);
       }
       return xhr.send(formData);
     };
