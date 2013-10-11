@@ -1,0 +1,6 @@
+Welcome to Readbox,
+
+To activate your account please open the following url:
+{{ user.get_activation_link() }}
+
+~wolph

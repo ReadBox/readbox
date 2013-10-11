@@ -1,0 +1,6 @@
+Welcome to Readbox,
+
+To reset your password please open the following url:
+{{ user.get_reset_link() }}
+
+~wolph

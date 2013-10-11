@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+
+{% block body %}
+
+<div class="well" style="margin: auto; margin-top: 250px; width: 500px;">
+    <h2>Login</h2>
+    <form method="post" class="form" action="{% url 'django.contrib.auth.views.login' %}">
+        {% crispy form %}
+        <button class="btn btn-lg btn-primary btn-block" type="submit">Login</button>
+    <input type="hidden" name="next" value="{{ next }}" />
+    </form>
+</div>
+<a href="{% url 'django.contrib.auth.views.register' %}">
+</a>
+
+{% endblock body %}
