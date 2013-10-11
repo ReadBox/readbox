@@ -37,7 +37,6 @@
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-default" data-dismiss="modal">Cancel upload</button>
-          <button type="button" class="btn btn-primary">Upload files</button>
         </div>
       </div><!-- /.modal-content -->
     </div><!-- /.modal-dialog -->
@@ -214,6 +213,10 @@
 {% endblock body %}
 
 {% block footer %}
+<nav class="navbar navbar-default navbar-fixed-bottom">
+    <div class="navbar-brand">Drag files onto this page to upload</div>
+</nav>
+
 {{ super() }}
 <script type="text/javascript">
 </script>
