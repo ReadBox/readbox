@@ -37,19 +37,11 @@ class RevisionAdmin(admin.ModelAdmin):
     search_fields = ('path',)
 
 
-class FilePatternAdmin(admin.ModelAdmin):
-    date_hierarchy = 'created_at'
-    list_display = (u'id', 'updated_at', 'created_at', 'name')
-    list_filter = ('updated_at', 'created_at')
-    raw_id_fields = ('patterns',)
-    search_fields = ('name',)
-
-
 class PatternAdmin(admin.ModelAdmin):
     date_hierarchy = 'created_at'
     list_display = (u'id', 'updated_at', 'created_at', 'name', 'pattern',
-         'example', 'child_pattern')
-    list_filter = ('updated_at', 'created_at', 'child_pattern')
+         'example')
+    list_filter = ('updated_at', 'created_at')
     search_fields = ('name',)
 
 
@@ -58,7 +50,6 @@ class TagAdmin(admin.ModelAdmin):
     list_display = (u'id', 'updated_at', 'created_at', 'name', 'type')
     list_filter = ('updated_at', 'created_at', 'type')
     search_fields = ('name',)
-
 
 
 class TagTypeAdmin(admin.ModelAdmin):
@@ -70,7 +61,6 @@ class TagTypeAdmin(admin.ModelAdmin):
     search_fields = ('name', 'slug')
 
 admin.site.register(models.File, FileAdmin)
-admin.site.register(models.FilePattern, FilePatternAdmin)
 admin.site.register(models.Pattern, PatternAdmin)
 admin.site.register(models.Permission, PermissionAdmin)
 admin.site.register(models.Revision, RevisionAdmin)

@@ -10,6 +10,7 @@
         <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
         <script src="{{ STATIC_URL }}jquery-ui-1.10.3/jquery-1.9.1.js"></script>
         <script src="{{ STATIC_URL }}jquery-ui-1.10.3/ui/jquery-ui.js"></script>
+        <script src="{{ STATIC_URL }}jquery.cookie.js"></script>
         <script src="{{ STATIC_URL }}dropzone.js"></script>
         {# <script src="{{ STATIC_URL }}jquery.kool-swap/js/jquery.kool-swap.js"></script> #}
 
@@ -25,14 +26,17 @@
     </head>
     <body style="padding-bottom: 70px;">
         <nav class="navbar navbar-default" role="navigation">
+            {% block navbar %}
             <div class="navbar-header">
                 <a class="navbar-brand" href="{{ url('index') }}">Readbox</a>
             </div>
-            {% if user.is_authenticated %}
-            <button type="button" href="{{ url('logout') }}" class="btn btn-default navbar-btn">Logout {{ user }}</button>
+            {% if user.is_authenticated() %}
+            <a href="{{ url('logout') }}" class="btn btn-default navbar-btn">Logout {{ user }}</a>
             {% else %}
-            <button type="button" href="{{ url('login') }}" class="btn btn-default navbar-btn">Login</button>
+            <a href="{{ url('login') }}" class="btn btn-default navbar-btn">Login</a>
             {% endif %}
+
+            {% endblock navbar %}
         </nav>
 
         <noscript>
@@ -49,88 +53,13 @@
         {% block body %}
         {% endblock body %}
 
-        <form id="upload_form" method="post" action="{{ url('upload') }}" class="dropzone navbar navbar-default navbar-fixed-bottom">
-            {% csrf_token %}
-        </form>
-
-
         <!-- Include all compiled plugins (below), or include individual files as needed -->
+        {% block footer %}
         <script src="{{ STATIC_URL }}bootstrap/js/bootstrap.min.js"></script>
         <script type="text/javascript">
             $('a').tooltip();
-
-            function setState(data, textStatus, jqXHR){
-                if(data){
-                    $.each(data.html, function(key, value){
-                        $('#' + key).html(value);
-                    });
-
-                    if(typeof(data.tags) != 'undefined'){
-                        $('#id_tags_tags_input').importTags(data.tags);
-                    }
-                }
-
-                if(textStatus === 'success'){
-                    window.history.pushState(data, data.title, data.path);
-                }
-            }
-            
-            function listLoad(){
-                var $this = $(this);
-                $.getJSON(this.href, setState);
-                return false;
-            }
-            
-            function searchLoad(){
-                var $form = $('#search-form');
-                var url = '?' + $form.serialize();
-                $.getJSON(url, setState);
-                return false;
-            }
-            
-            function init(){
-                // $('a.list').click(listLoad);
-                // $('#breadcrumb button[data-toggle=dropdown]').click(dropdownLoad);
-                // $('button.tag').click(function(){
-                //     $('#id_tags_tags_input').addTag($(this).data('tag'));
-                // });
-                
-                $(document).on('click', 'a.list', listLoad)
-                $(document).on('click', 'button.tag', function(){
-                    $('#id_tags_tags_input').addTag($(this).data('tag'));
-                });
-                $('#breadcrumb').on('click', 'button[data-toggle=dropdown]',
-                    dropdownLoad);
-            }
-            init();
-
-            window.onpopstate = function(event){
-                setState(event.state, true);
-            }
-
-            function dropdownLoad(){
-                var $this = $(this);
-                if(!$this.data('loaded')){
-                    $this.data('loaded', true);
-                    var dropdownMenu = $this.siblings('ul.dropdown-menu');
-                    $this.unbind('click', dropdownLoad);
-                    dropdownMenu.load(dropdownMenu.data('source'));
-                }
-            }
-
-            Dropzone.options.uploadForm = {
-                parallelUploads: 2,
-                uploadMultiple: true,
-                addRemoveLinks: true,
-                dictDefaultMessage: '<span class="navbar-brand">Drop files here to upload</span>',
-                accept: function(file, done){
-                    console.log(file);
-                    //prompt('How would you like to call the new file?', file.name);
-                    file.name = 'foobar';
-                    done();
-                }
-            }
-
         </script>
+        {% endblock footer %}
+
         </body>
 </html>

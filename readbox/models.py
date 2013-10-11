@@ -83,19 +83,13 @@ class FileManager(models.Manager):
         )
 
 
-class FilePattern(base_models.NameMixin, base_models.CreatedAtModelBase):
-    name = models.CharField(max_length=100)
-    patterns = models.ManyToManyField('Pattern')
-
-    class Meta:
-        unique_together = 'name',
-
-
 class Pattern(base_models.NameMixin, base_models.CreatedAtModelBase):
     name = models.CharField(max_length=100)
     pattern = models.CharField(max_length=250)
     example = models.TextField(blank=True, null=True)
-    child_pattern = models.ForeignKey(FilePattern, blank=True, null=True)
+
+    def __unicode__(self):
+        return self.pattern
 
     class Meta:
         unique_together = 'name',
@@ -125,8 +119,9 @@ class File(base_models.NameMixin, base_models.ModelBase):
         choices=Source.choices,
         default=Source.dropbox,
     )
-    tags = models.ManyToManyField(Tag, related_name='files')
-    pattern = models.ForeignKey(FilePattern, null=True, blank=True)
+    tags = models.ManyToManyField(Tag, related_name='files', null=True,
+                                  blank=True)
+    patterns = models.ManyToManyField(Pattern, null=True, blank=True)
     child_count = denorm.CountField('children')
 
     updated_at = models.DateTimeField()

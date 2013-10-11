@@ -22,6 +22,11 @@
                 <div class="form-group {% if form.errors.password %}has-error{% endif %}">
                     {{ form.password.label_tag(attrs={'class': 'sr-only'}) }}
                     {{ form.password.as_widget() }}
+
+                    <div id="password-progress" style="padding-top: 15px;"></div>
+                    <div id="password-verdict" class="sr"></div>
+                    <div id="password-errors" class="sr"></div>
+
                     {% if form.errors.password %}
                     <span class="help-block">
                         {{ form.errors.password.as_text() }}
@@ -35,7 +40,16 @@
                 </div>
                 {% endif %}
 
+                {% if status and message %}
+                <div class="alert alert-{{ status }}">
+                    {{ message }}
+                </div>
+                {% endif %}
+
                 <button class="btn btn-lg btn-primary btn-block" type="submit">Login/Register</button>
+                {% if form.errors %}
+                <button class="btn btn-lg btn-danger btn-block" type="submit">Reset Password</button>
+                {% endif %}
                 <input type="hidden" name="next" value="{{ next }}" />
                 {% csrf_token %}
             </form>
@@ -43,4 +57,23 @@
     </div>
 </div>
 {% endblock body %}
+
+{% block head %}
+{{ super() }}
+<script src="{{ STATIC_URL }}jquery.pwstrength.js"></script>
+{% endblock head %}
+
+{% block footer %}
+{{ super() }}
+<script type="text/javascript">
+    $(':password').pwstrength({
+        showVerdicts: false,
+        viewports: {
+            progress: '#password-progress',
+            verdict: '#password-verdict',
+            errors: '#password-errors'
+        }
+    });
+</script>
+{% endblock footer %}
 

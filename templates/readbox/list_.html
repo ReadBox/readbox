@@ -11,16 +11,11 @@ function updateTag(){
 {% endblock head %}
 
 {% block body %}
+{{ super() }}
 
 <div>
     <div class="row">
         <div class="col-xs-6" id="breadcrumb">{{ macros.breadcrumb(directory) }}</div>
-{#
-        <div class="col-xs-6 btn-group">
-            <button type="button" class="btn btn-xs">Current Tags</button>
-            {{ macros.tags(directory, size='btn-xs') }}
-        </div>
-#}
         <div class="col-xs-6 btn-group">
             <form id="search-form" role="form" class="form-inline"
                     action="{{ request.path }}">

@@ -1,6 +1,7 @@
 # Django settings for readbox project.
 import os
 import sys
+import datetime
 
 DEBUG = False
 TEMPLATE_DEBUG = DEBUG
@@ -157,12 +158,21 @@ INSTALLED_APPS = (
     'crispy_forms',
 )
 
-AUTH_USER_MODEL = 'auth.User'
-ACCOUNT_ACTIVATION_DAYS = 7
+AUTH_USER_MODEL = 'auth.ReadboxUser'
 AUTH_USER_EMAIL_DOMAIN = 'student.tudelft.nl'
+AUTHENTICATION_BACKENDS = (
+    'django.contrib.auth.backends.ModelBackend',
+    'auth.backends.TokenBackend',
+)
+ACCOUNT_ACTIVATION_DAYS = 7
 LOGIN_URL = 'login'
 LOGIN_REDIRECT_URL = 'index'
 LOGOUT_URL = 'logout'
+DEFAULT_FROM_EMAIL = 'wolph@wol.ph'
+BASE_URL = 'http://readbox.wol.ph'
+
+TOKEN_EXPIRATION_TIME = datetime.timedelta(days=7)
+
 
 CRISPY_TEMPLATE_PACK = 'bootstrap3'
 
@@ -279,11 +289,16 @@ DROPBOX_BASE_PATH = '/'
 
 DJANGO_UTILS_USE_JINJA = True
 
+TAGS_INPUT_INCLUDE_JQUERY = False
 TAGS_INPUT_MAPPINGS = {
     'readbox.Tag': {
         'field': 'name',
         'create_missing': False,
-    }
+    },
+    'readbox.Pattern': {
+        'field': 'name',
+        'create_missing': False,
+    },
 }
 
 if os.path.isfile('local_settings.py'):
