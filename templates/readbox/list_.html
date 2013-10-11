@@ -31,11 +31,7 @@ function updateTag(){
 </div>
 
 <div id="main_content">
-{% if request.GET %}
 {{ macros.render_files(files, tags_dict=tags_dict, show_path=directory.path) }}
-{% else %}
-{{ macros.render_files(files, tags_dict=tags_dict) }}
-{% endif %}
 </div>
 
 {% endblock body %}
