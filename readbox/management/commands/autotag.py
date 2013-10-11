@@ -18,6 +18,16 @@ class Command(base_command.CustomBaseCommand):
 
         self.handle_main_directory()
 
+        self.remove_unused_tags()
+
+    def remove_unused_tags(self):
+        for tag in models.Tag.objects.all():
+            count = tag.files.all().count()
+            print '%r: %d' % (tag, count)
+            if count <= 5:
+                print 'Removing %r' % tag
+                tag.delete()
+
     def get_tag(self, tags, type_, name):
         name = name.strip()
         tag = tags.get(name)
@@ -44,6 +54,10 @@ class Command(base_command.CustomBaseCommand):
         if tag:
             tag.files.add(*models.File.objects.filter(
                 path__istartswith=directory.path))
+
+            if tag.files.all().count() <= 2:
+                print 20 * '#', 'Deleting tag %r' % tag
+                tag.delete()
 
     def handle_main_directory(self):
         main = models.File.objects.get(path=settings.DROPBOX_BASE_PATH)
