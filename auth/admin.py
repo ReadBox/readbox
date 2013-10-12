@@ -1,15 +1,11 @@
 import models
 from django.contrib import admin
+from django.contrib.auth import admin as auth_admin
 
 
 
-class ReadboxUserAdmin(admin.ModelAdmin):
-    list_display = (u'id', 'password', 'last_login', 'is_superuser',
-         'username', 'first_name', 'last_name', 'email', 'is_staff',
-         'is_active', 'date_joined')
-    list_filter = ('last_login', 'is_superuser', 'is_staff', 'is_active',
-         'date_joined')
-    raw_id_fields = ('groups', 'user_permissions')
+class ReadboxUserAdmin(auth_admin.UserAdmin):
+    pass
 
 
 class TokenAdmin(admin.ModelAdmin):
