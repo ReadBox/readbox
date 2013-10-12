@@ -2,8 +2,8 @@ from django.contrib import auth
 
 
 class TokenBackend(object):
-    def authenticate(self, token, password):
-        if token.is_valid and token.user.check_password(password):
+    def authenticate(self, token):
+        if token.is_valid:
             token.used = True
             token.save()
             return token.user

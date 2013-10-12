@@ -153,7 +153,6 @@ class PasswordForm(forms.Form):
         token.user.set_password(self.cleaned_data['password'])
         user = auth.authenticate(
             token=token,
-            password=self.cleaned_data['password'],
         )
         if user:
             auth.login(request, user)
