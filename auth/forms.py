@@ -58,6 +58,12 @@ class LoginForm(forms.Form):
         email = cleaned_data.get('name', '')
         username = email.split('@')[0]
         password = cleaned_data.get('password')
+        if not email:
+            raise forms.ValidationError('You must enter a valid email '
+                                        'address')
+        if not username:
+            raise forms.ValidationError('Your mail address did not '
+                                        'convert to a valid username.')
 
         users = list(
             auth.get_user_model().objects.filter(email__iexact=email)
