@@ -146,7 +146,7 @@
                     $verdict.text(options.verdicts[2]);
                 }
             } else if (score >= options.scores[2] && score < options.scores[3]) {
-                progressbar.find(".progress-bar").css("width", "75%").progressbar.addClass("progress-bar-warning").removeClass("progress-bar-danger").removeClass("progress-bar-success");
+                progressbar.find(".progress-bar").css("width", "75%").addClass("progress-bar-warning").removeClass("progress-bar-danger").removeClass("progress-bar-success");
                 if (options.showVerdicts) {
                     $verdict.text(options.verdicts[3]);
                 }
