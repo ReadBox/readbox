@@ -2,7 +2,6 @@ from django import forms
 from django.contrib import auth
 from django.conf import settings
 from django.core import validators
-from . import models
 
 from coffin import shortcuts
 from django.core import mail
