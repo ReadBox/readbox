@@ -2,7 +2,6 @@ from django import forms
 from django.contrib import auth
 from django.conf import settings
 from django.core import validators
-from . import models
 
 from coffin import shortcuts
 from django.core import mail
@@ -59,6 +58,12 @@ class LoginForm(forms.Form):
         email = cleaned_data.get('name', '')
         username = email.split('@')[0]
         password = cleaned_data.get('password')
+        if not email:
+            raise forms.ValidationError('You must enter a valid email '
+                                        'address')
+        if not username:
+            raise forms.ValidationError('Your mail address did not '
+                                        'convert to a valid username.')
 
         users = list(
             auth.get_user_model().objects.filter(email__iexact=email)
@@ -153,7 +158,6 @@ class PasswordForm(forms.Form):
         token.user.set_password(self.cleaned_data['password'])
         user = auth.authenticate(
             token=token,
-            password=self.cleaned_data['password'],
         )
         if user:
             auth.login(request, user)

@@ -10,7 +10,9 @@
                     {{ form.name.label_tag(attrs={'class': 'sr-only'}) }}
                     <div class="input-group" style="margin-bottom: 5px;">
                         {{ form.name.as_widget() }}
+                        {% if form.name.field.domain %}
                         <span class="input-group-addon">@{{ form.name.field.domain }}</span>
+                        {% endif %}
                     </div>
                     {% if form.errors.name %}
                     <span class="help-block">
@@ -26,6 +28,11 @@
                     <div id="password-progress" style="padding-top: 15px;"></div>
                     <div id="password-verdict" class="sr"></div>
                     <div id="password-errors" class="sr"></div>
+
+                    <p class="help-block">Note: You can choose any password during signup!<br>
+                    The email check is only to make sure you are a student.</p>
+                    <p class="text-danger">Your Blackboard username is
+                    generally <em>not</em> the same as your mail address!</p>
 
                     {% if form.errors.password %}
                     <span class="help-block">

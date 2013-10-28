@@ -1,5 +1,6 @@
 import functools
 
+from django.contrib import auth
 from django_utils import view_decorators
 from django.conf import settings
 
@@ -50,11 +51,17 @@ def _token_view(f):
 @view_decorators.env
 @_token_view
 def activate(request, token):
-    if token and not request.context['status']:
+    if token and not request.context['message']:
         request.context['message'] = 'Your account has been activated'
         request.context['status'] = 'success'
-        token.used = True
-        token.save()
+
+        user = auth.authenticate(token=token)
+        if user:
+            # TODO: yes... pretty easy to activate an inactive account like
+            # this, but good enough for the time being
+            user.is_active = True
+            user.save()
+            auth.login(request, user)
 
 
 @view_decorators.env

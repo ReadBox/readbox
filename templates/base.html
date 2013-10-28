@@ -8,6 +8,20 @@
         <link href="{{ STATIC_URL }}bootstrap/css/bootstrap.min.css" rel="stylesheet" media="screen">
 
         <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+        <script src="//d3nslu0hdya83q.cloudfront.net/dist/1.0/raven.min.js"></script>
+        <script>
+        if(Raven){
+            Raven.config('http://79d2f3bfe8224995bb8073d38101aaab@sentry.wol.ph/4', {
+                whitelistUrls: [/wol\.ph/]
+            }).install();
+            {% if user.is_authenticated() %}
+            Raven.setUser({
+                email: '{{ user.email }}',
+                id: '{{ user.pk }}'
+            });
+            {% endif %}
+        }
+        </script>
         <script src="{{ STATIC_URL }}jquery-ui-1.10.3/jquery-1.9.1.js"></script>
         <script src="{{ STATIC_URL }}jquery-ui-1.10.3/ui/jquery-ui.js"></script>
         <script src="{{ STATIC_URL }}jquery.cookie.js"></script>
