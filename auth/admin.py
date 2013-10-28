@@ -28,7 +28,6 @@ class TokenAdmin(admin.ModelAdmin):
     list_filter = ('user', 'expires_at', 'used')
 
 
-admin.site.register(auth_models.Group, GroupAdmin)
 admin.site.register(auth_models.Permission, PermissionAdmin)
 admin.site.register(models.ReadboxUser, ReadboxUserAdmin)
 admin.site.register(models.Token, TokenAdmin)
