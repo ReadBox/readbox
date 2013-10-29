@@ -4,6 +4,8 @@
 {% import 'readbox/macros.html' as macros %}
 
 {% block body %}
+{{ super() }}
+
 {% if not request.ajax %}
 <h1>Revision history</h1>
 <h3>{{ macros.breadcrumb(file) }}</h3>

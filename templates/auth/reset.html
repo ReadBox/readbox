@@ -1,26 +1,13 @@
 {% extends "base.html" %}
 
 {% block body %}
+{{ super() }}
 <div class="container" style="margin-top: 100px; max-width: 400px;">
-    <div class="panel panel-default {% if form.errors %}panel-danger{% elif form.is_valid() and request.POST %}panel-success{% else %}panel-primary{% endif %}">
-        <div class="panel-heading">Login/Register</div>
+    <div class="panel panel-default panel-{{ status }}">
+        <div class="panel-heading">Reset Password</div>
         <div class="panel-body">
+            {% if form %}
             <form method="post" class="form" action="{{ request.path }}">
-                <div class="form-group {% if form.errors.name %}has-error{% endif %}">
-                    {{ form.name.label_tag(attrs={'class': 'sr-only'}) }}
-                    <div class="input-group" style="margin-bottom: 5px;">
-                        {{ form.name.as_widget() }}
-                        {% if form.name.field.domain %}
-                        <span class="input-group-addon">@{{ form.name.field.domain }}</span>
-                        {% endif %}
-                    </div>
-                    {% if form.errors.name %}
-                    <span class="help-block">
-                        {{ form.errors.name.as_text() }}
-                    </span>
-                    {% endif %}
-                </div>
-
                 <div class="form-group {% if form.errors.password %}has-error{% endif %}">
                     {{ form.password.label_tag(attrs={'class': 'sr-only'}) }}
                     {{ form.password.as_widget() }}
@@ -28,11 +15,6 @@
                     <div id="password-progress" style="padding-top: 15px;"></div>
                     <div id="password-verdict" class="sr"></div>
                     <div id="password-errors" class="sr"></div>
-
-                    <p class="help-block">Note: You can choose any password during signup!<br>
-                    The email check is only to make sure you are a student.</p>
-                    <p class="text-danger">Your Blackboard username is
-                    generally <em>not</em> the same as your mail address!</p>
 
                     {% if form.errors.password %}
                     <span class="help-block">
@@ -53,13 +35,13 @@
                 </div>
                 {% endif %}
 
-                <button class="btn btn-lg btn-primary btn-block" type="submit">Login/Register</button>
-                {% if form.errors %}
-                <button class="btn btn-lg btn-danger btn-block" type="submit">Reset Password</button>
-                {% endif %}
+                <button class="btn btn-lg btn-primary btn-block" type="submit">Reset Password</button>
                 <input type="hidden" name="next" value="{{ next }}" />
                 {% csrf_token %}
             </form>
+            {% else %}
+            {{ message }}
+            {% endif %}
         </div>
     </div>
 </div>
@@ -83,4 +65,3 @@
     });
 </script>
 {% endblock footer %}
-

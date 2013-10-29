@@ -6,6 +6,7 @@ import os
 
 from . import forms
 from . import models
+from . import dropbox
 
 
 def path_decorator(method):
@@ -109,6 +110,9 @@ def download(request, file_):
 
 @view_decorators.env(login_required=True)
 def upload(request):
-    pass
-
+    client = dropbox.get_client()
+    fh = request.FILES.get('file[]')
+    name = request.POST.get('file_name[]')
+    if fh and name:
+        return client.put_file(name, fh.file, True)
 

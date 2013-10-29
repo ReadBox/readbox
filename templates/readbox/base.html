@@ -1,4 +1,223 @@
 {% extends 'base.html' %}
 
+{% block navbar %}
+{{ super() }}
+
+{% if request.user.is_superuser %}
+<a id="edit_button" target="_blank" href="{% url 'admin:readbox_file_change' directory.id %}" class="btn btn-danger btn-sm">Edit</a>
+{% endif %}
+
+{% endblock navbar %}
+
 {% block body %}
+
+<div id="dropzone_previews" style="display: none;"></div>
+
+  <!-- Modal -->
+  <div class="modal fade" id="name_dialog">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title">Please specify a name for this upload</h4>
+        </div>
+        <div class="modal-body">
+            <p>Folder regex: <code id="folder_regex"></code></p>
+            <table class="table table-condensed">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Size</th>
+                        <th>Type</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody id="uploads">
+                </tbody>
+            </table>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Cancel upload</button>
+        </div>
+      </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+  </div><!-- /.modal -->
+
+{{ super() }}
+
+<script type="text/javascript">
+    function setState(data, textStatus, jqXHR){
+        if(data){
+            $.each(data.html, function(key, value){
+                $('#' + key).html(value);
+            });
+
+            if(typeof(data.tags) != 'undefined'){
+                $('#id_tags_tags_input').importTags(data.tags);
+            }
+        }
+
+        if(textStatus === 'success'){
+            window.history.pushState(data, data.title, data.path);
+        }
+        initState();
+    }
+    function initState(){
+        var data = document.getElementById('breadcrumb_toolbar').dataset;
+        $('#edit_button').attr('href', data.editUrl);
+        if(data.regex){
+            $('#folder_regex').html(data.regex);
+        }else{
+            $('#folder_regex').html('This folder does not allow uploads!');
+        }
+    }
+    
+    function listLoad(){
+        var $this = $(this);
+        $.getJSON(this.href, setState);
+        return false;
+    }
+    
+    function searchLoad(){
+        var $form = $('#search-form');
+        var url = '?' + $form.serialize();
+        $.getJSON(url, setState);
+        return false;
+    }
+    
+    function init(){
+        var dropzone = new Dropzone(document.body, dropzoneOptions);
+
+        $(document).on('click', 'a.list', listLoad)
+        $(document).on('click', 'button.tag', function(){
+            $('#id_tags_tags_input').addTag($(this).data('tag'));
+        });
+        $(document).on('click', '#breadcrumb button[data-toggle=dropdown]',
+            dropdownLoad);
+
+        window.onpopstate = function(event){
+            setState(event.state, true);
+        }
+        initState();
+    }
+
+    function dropdownLoad(){
+        var $this = $(this);
+        if(!$this.data('loaded')){
+            $this.data('loaded', true);
+            var dropdownMenu = $this.siblings('ul.dropdown-menu');
+            $this.unbind('click', dropdownLoad);
+            dropdownMenu.load(dropdownMenu.data('source'));
+        }
+    }
+
+    var dropzoneOptions = {
+        url: '{{ url('upload') }}',
+        previewsContainer: '#dropzone_previews',
+        method: 'post',
+        headers: {
+            'X-CSRFToken': $.cookie('csrftoken')
+        },
+        clickable: false,
+        parallelUploads: 2,
+        uploadMultiple: true,
+        addRemoveLinks: true,
+        dictDefaultMessage: '<span class="navbar-brand">Drop files here to upload</span>',
+        accept: function(file, done){
+            var dialog = $('#name_dialog');
+            var uploads = $('#uploads');
+            var tr = $('<tr>'
+                + '<td class="col-xs-7"><input type="text" class="form-control input-sm" name="name"></td>'
+                + '<td class="col-xs-2"><input type="text" class="form-control input-sm" disabled value="' + file.size + '"></td>'
+                + '<td class="col-xs-2"><input type="text" class="form-control input-sm" disabled value="' + file.type + '"></td>'
+                + '<td class="col-xs-1"><btn class="btn btn-default"><span class="glyphicon"></span></btn></td>'
+                + '</tr>'
+            );
+            uploads.append(tr);
+            tr.data('file', file);
+            tr.data('done', done);
+
+            tr.find('input[name="name"]')
+                .on('keyup', uploadNameChange)
+                .on('change', uploadNameChange)
+                .val(file.name)
+                .trigger('change', file);
+
+            tr.find('btn')
+                .on('click', processFile);
+
+            dialog.modal({show: true}).children('div.modal-dialog').css({'width': '90%'});
+        },
+        uploadprogress: function(file, progress, bytesSent){
+            file.progress.css('width', Math.round(progress) + '%');
+        },
+        error: function(file, errorMessage, request){
+            if(file.progress){
+                file.progress.addClass('progress-bar-danger')
+                    .removeClass('progress-bar-success');
+
+                file.progress.append('<span>' + request.statusText);
+                file.progress.css('width', '100%');
+            }
+        }
+    }
+
+    function processFile(){
+        var $this = $(this);
+        var $tr = $this.parents('tr');
+        var name = $tr.find('input[name="name"]').val();
+        if($this.hasClass('btn-success')){
+            $this.find('span.glyphicon').removeClass('glyphicon-ok')
+                .addClass('glyphicon-time')
+
+            $this.removeClass('btn-success')
+                .addClass('btn-warning');
+
+            $tr.find('input[name="name"]').after('<br><div class="progress">'
+                + '<div class="progress-bar progress-bar-success" role="progressbar">'
+            );
+            $tr.data('file').progress = $tr.find('div.progress-bar');
+            $tr.data('file').full_name = $('#breadcrumb_toolbar').data('path') + name;
+            $tr.data('done')();
+        }else if($this.hasClass('btn-danger')){
+            $tr.hide('fast', function(){$tr.remove();});
+        }
+    }
+
+    function uploadNameChange(){
+        var $this = $(this);
+        var tr = $this.parents('tr');
+        var file = tr.data('file');
+        var done = tr.data('done');
+        file.name = this.value;
+
+        var regex = new RegExp($('#breadcrumb_toolbar').data('regex'));
+        if(regex.test(this.value) && this.value.match(regex)[0] == this.value){
+            tr.addClass('has-success');
+            tr.removeClass('has-error');
+            tr.find('btn').addClass('btn-success');
+            tr.find('btn').removeClass('btn-danger');
+            tr.find('btn span.glyphicon').addClass('glyphicon-ok');
+            tr.find('btn span.glyphicon').removeClass('glyphicon-remove');
+        }else{
+            tr.addClass('has-error');
+            tr.removeClass('has-success');
+            tr.find('btn').addClass('btn-danger');
+            tr.find('btn').removeClass('btn-success');
+            tr.find('btn span.glyphicon').addClass('glyphicon-remove');
+            tr.find('btn span.glyphicon').removeClass('glyphicon-ok');
+        }
+    }
+
+    $(init);
+</script>
 {% endblock body %}
+
+{% block footer %}
+<nav class="navbar navbar-default navbar-fixed-bottom">
+    <div class="navbar-brand">Drag files onto this page to upload</div>
+</nav>
+
+{{ super() }}
+<script type="text/javascript">
+</script>
+{% endblock footer %}

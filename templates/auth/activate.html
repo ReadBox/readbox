@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+
+{% block body %}
+<div class="container" style="margin-top: 100px; max-width: 400px;">
+    <div class="panel panel-default panel-{{ status }}">
+        <div class="panel-heading">
+            {{ message }}
+        </div>
+    </div>
+</div>
+
+{% endblock body %}

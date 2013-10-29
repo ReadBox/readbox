@@ -1,7 +1,12 @@
-<li role="presentation" class="dropdown-header">Files</li>
-{% macro breadcrumb(file) %}
-<div class="btn-toolbar">
-    {%- for path, name, is_base_path in file.path_parts() -%}
+{% macro breadcrumb(directory) %}
+<div
+        id="breadcrumb_toolbar"
+        class="btn-toolbar"
+        data-edit-url="{% url 'admin:readbox_file_change' directory.id %}"
+        data-path="{{ directory.path }}"
+        data-regex="{% for pattern in directory.patterns.all() %}{{ pattern }}{% if not loop.last %}|{% endif %}{% endfor %}"
+    >
+    {%- for path, name, is_base_path in directory.path_parts() -%}
     <div class="btn-group">
         <a class="btn btn-sm btn-default list" href="{{ url('list', path) }}">
             {{ name }}
