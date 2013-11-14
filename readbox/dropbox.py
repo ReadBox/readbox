@@ -95,7 +95,10 @@ class Syncer(object):
             file_.size = metadata.bytes
             file_.source = models.File.Source.dropbox
             file_.updated_at = metadata.modified
+
             if metadata.get('is_deleted'):
+                file_.deleted_at = metadata.modified
+            else:
                 file_.deleted_at = metadata.modified
 
             if metadata.get('contents'):
@@ -107,6 +110,9 @@ class Syncer(object):
 
             if parent:
                 file_.parent = parent
+            else:
+                file_.parent = None
+
             file_.save()
 
             if file_.is_file:
