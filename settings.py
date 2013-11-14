@@ -212,7 +212,11 @@ LOGGING = {
             'level': 'ERROR',
             'filters': ['require_debug_false'],
             'class': 'django.utils.log.AdminEmailHandler'
-        }
+        },
+        'sentry': {
+            'level': 'ERROR',
+            'class': 'raven.contrib.django.raven_compat.handlers.SentryHandler',
+        },
     },
     'loggers': {
         '': {
@@ -277,6 +281,22 @@ else:
     # Add raven to the list of installed apps
     INSTALLED_APPS = INSTALLED_APPS + (
         'raven.contrib.django.raven_compat',
+    )
+    LOGGING['loggers'].update({
+        'raven': {
+            'level': 'DEBUG',
+            'handlers': ['console'],
+            'propagate': False,
+        },
+        'sentry.errors': {
+            'level': 'DEBUG',
+            'handlers': ['console'],
+            'propagate': False,
+        },
+    })
+    LOGGING['loggers']['']['handlers'].append('sentry')
+    MIDDLEWARE_CLASSES += (
+        'raven.contrib.django.raven_compat.middleware.Sentry404CatchMiddleware',
     )
 
 # Your dropbox settings, you need to get these from the Dropbox site after
