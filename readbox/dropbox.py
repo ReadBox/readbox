@@ -53,9 +53,10 @@ class Syncer(object):
             self.logger.info('Updating path %r', path)
         else:
             try:
-                file_ = models.File.objects.get(
-                    path=path,
-                )
+                file_ = (
+                    models.File.objects.filter(path__iexact=path)
+                    | models.File.objects.filter(path__iexact=path + '/')
+                ).get()
                 self.logger.info('Updating path %r', path)
             except models.File.DoesNotExist:
                 self.logger.info('Found new path %r', path)
@@ -99,7 +100,7 @@ class Syncer(object):
             if metadata.get('is_deleted'):
                 file_.deleted_at = metadata.modified
             else:
-                file_.deleted_at = metadata.modified
+                file_.deleted_at = None
 
             if metadata.get('contents'):
                 file_.created_at = min(
