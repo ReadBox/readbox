@@ -52,6 +52,9 @@ class Command(base_command.CustomBaseCommand):
 
     def add_recursive(self, tag, directory):
         if tag:
+            if not tag.pk:
+                tag.save()
+
             tag.files.add(*models.File.objects.filter(
                 path__istartswith=directory.path))
 
