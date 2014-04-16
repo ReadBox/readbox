@@ -29,6 +29,11 @@ class Command(base_command.CustomBaseCommand):
                 tag.delete()
 
     def get_tag(self, tags, type_, name):
+        if name[64:]:
+            print 'Skipping the creation of tag with long name: %r' % (
+                name)
+            return
+
         name = name.strip()
         tag = tags.get(name)
         if not tag:
@@ -71,8 +76,10 @@ class Command(base_command.CustomBaseCommand):
             match = re.search('\(([a-zA-Z]+ jaar)\)', directory.name)
             if match:
                 tag = self.get_tag(tags, tag_type, match.group(1))
+                if tag:
+                    self.add_recursive(tag, directory)
+
                 print 'Processing year %r: %s' % (directory, directory.path)
-                self.add_recursive(tag, directory)
                 self.handle_year_directory(directory)
 
     def handle_year_directory(self, year):
@@ -107,8 +114,8 @@ class Command(base_command.CustomBaseCommand):
                 self.handle_sub_directory(directory)
 
     def handle_sub_directory(self, sub_directory):
-        print 'Processing sub directory %r: %s' % (
-                sub_directory, sub_directory.path)
+        print 'Processing sub directory %r: %s' % (sub_directory,
+                                                   sub_directory.path)
 
         tag_type = self.get_tag_type('Directory')
         tags = models.Tag.as_dict()
