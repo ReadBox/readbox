@@ -7,6 +7,8 @@
         <link href="{{ STATIC_URL }}jquery-ui-1.10.3/themes/base/minified/jquery-ui.min.css" rel="stylesheet" media="screen">
         <link href="{{ STATIC_URL }}bootstrap/css/bootstrap.min.css" rel="stylesheet" media="screen">
 
+        <meta name="google-site-verification" content="LwXVBhEYeYdJTUOaD7LY3laSUDdK16L87uo0vMmqfdo" />
+
         <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
         <script src="//d3nslu0hdya83q.cloudfront.net/dist/1.0/raven.min.js"></script>
         <script>
@@ -44,10 +46,11 @@
             <div class="navbar-header">
                 <a class="navbar-brand" href="{{ url('index') }}">Readbox</a>
             </div>
+            <a href="https://github.com/readbox/readbox/issues" class="btn btn-info navbar-btn">Feedback and/or errors? Report here</a>
             {% if user.is_authenticated() %}
-            <a href="{{ url('logout') }}" class="btn btn-default navbar-btn">Logout {{ user }}</a>
+            <a href="{{ url('logout') }}" class="btn btn-success navbar-btn">Logout {{ user }}</a>
             {% else %}
-            <a href="{{ url('login') }}" class="btn btn-default navbar-btn">Login</a>
+            <a href="{{ url('login') }}" class="btn btn-success navbar-btn">Login</a>
             {% endif %}
 
             {% endblock navbar %}
