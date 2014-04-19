@@ -23,11 +23,18 @@ class Command(base_command.CustomBaseCommand):
             default=10),
     )
 
-    def handle(self, threads=1, no_cache=False, *args, **kwargs):
+    def handle(self, *args, **kwargs):
         base_command.CustomBaseCommand.handle(self, *args, **kwargs)
+        threads = kwargs['threads']
+        no_cache = kwargs['no_cache']
+
+        if args:
+            path, = args
+        else:
+            path = None
 
         dropbox.Syncer(
             force=no_cache,
             threads=threads,
-        ).start()
+        ).start(path=path)
 

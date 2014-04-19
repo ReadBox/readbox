@@ -212,7 +212,7 @@ class File(base_models.NameMixin, base_models.ModelBase):
         return super(File, self).save(*args, **kwargs)
 
     class Meta:
-        unique_together = 'path',
+        #unique_together = 'path',
         ordering = ['path']
 
 

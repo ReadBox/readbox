@@ -1,4 +1,5 @@
 from __future__ import absolute_import
+import time
 import dateutil
 import datetime
 import eventlet
@@ -53,9 +54,10 @@ class Syncer(object):
             self.logger.info('Updating path %r', path)
         else:
             try:
-                file_ = models.File.objects.get(
-                    path=path,
-                )
+                file_ = (
+                    models.File.objects.filter(path__iexact=path)
+                    | models.File.objects.filter(path__iexact=path + '/')
+                ).get()
                 self.logger.info('Updating path %r', path)
             except models.File.DoesNotExist:
                 self.logger.info('Found new path %r', path)
@@ -74,17 +76,7 @@ class Syncer(object):
             rev = file_.hash
 
         try:
-            if not metadata or (
-                not metadata.get('contents') and metadata.is_dir):
-                metadata = self.client.metadata(
-                    path,
-                    file_limit=25000,
-                    list=True,
-                    hash=hash_,
-                    rev=rev,
-                    include_deleted=True,
-                )
-                self.logger.debug('Got updated metadata %r', metadata)
+            metadata = self.get_metadata(metadata, path, hash_, rev)
 
             if metadata.is_dir:
                 file_.is_directory = True
@@ -95,23 +87,29 @@ class Syncer(object):
             file_.size = metadata.bytes
             file_.source = models.File.Source.dropbox
             file_.updated_at = metadata.modified
+
             if metadata.get('is_deleted'):
                 file_.deleted_at = metadata.modified
+            else:
+                file_.deleted_at = None
 
             if metadata.get('contents'):
                 file_.created_at = min(
                     f.modified for f in metadata['contents'])
             else:
-                file_.created_at = datetime.datetime(1970, 1, 1,
-                        tzinfo=dateutil.tz.tzutc())
+                file_.created_at = datetime.datetime(
+                    1970, 1, 1, tzinfo=dateutil.tz.tzutc())
 
             if parent:
                 file_.parent = parent
+            else:
+                file_.parent = None
+
             file_.save()
 
             if file_.is_file:
                 self.sync_revisions(file_)
-               
+
             for child in metadata.get('contents', []):
                 self.queue.put(dict(
                     path=child.path,
@@ -121,13 +119,45 @@ class Syncer(object):
 
         except rest.ErrorResponse, e:
             self.logger.debug('No change in metadata for %r: %r', path,
-                file_.hash)
+                              file_.hash)
             if e.status != 304:
                 raise
             else:
                 for child in file_.children.directories():
                     self.pool.spawn_n(
                         self.sync_file, child.path, file_=child, parent=file_)
+
+    def get_metadata(self, metadata, path, hash_, rev, retry=5):
+        if metadata:
+            if metadata.get('contents'):
+                return metadata
+            elif not metadata.is_dir:
+                return metadata
+
+        try:
+            metadata = self.client.metadata(
+                path,
+                file_limit=25000,
+                list=True,
+                hash=hash_,
+                rev=rev,
+                include_deleted=True,
+            )
+        except rest.ErrorResponse, e:
+            if e.status == 304:
+                raise
+
+            if not retry:
+                self.logger.exception(
+                    'Unable to fetch metadata for %r, %r, %r',
+                    path, hash_, rev)
+                raise
+
+            time.sleep(1)
+            return self.get_metadata(metadata, path, hash_, rev)
+
+        self.logger.debug('Got updated metadata %r', metadata)
+        return metadata
 
     def sync_revisions(self, file_):
         existing_revisions = dict((r.hash, r) for r in file_.revisions.all())
@@ -152,10 +182,11 @@ class Syncer(object):
             file_.created_at = file_.modified
         file_.save()
 
+
 def get_client():
     with open(settings.DROPBOX_SESSION_FILE, 'rb') as fh:
         sess = load(fh)
-    
+
     from dropbox.client import DropboxClient
     return DropboxClient(sess)
 

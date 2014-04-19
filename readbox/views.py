@@ -1,5 +1,6 @@
 from django_utils import view_decorators
 from django.conf import settings
+from django import http
 from coffin import shortcuts, common
 import functools
 import os
@@ -105,8 +106,12 @@ def tags(request, tags):
 @view_decorators.env(login_required=True)
 @path_decorator
 def download(request, file_):
-    return request.redirect(file_.get_link())
+    try:
+        link = file_.get_link()
+    except dropbox.rest.ErrorResponse:
+        raise http.Http404('Unable to get link for %r' % file_)
 
+    return request.redirect(link)
 
 @view_decorators.env(login_required=True)
 def upload(request):

@@ -18,7 +18,22 @@ class Command(base_command.CustomBaseCommand):
 
         self.handle_main_directory()
 
+        self.remove_unused_tags()
+
+    def remove_unused_tags(self):
+        for tag in models.Tag.objects.all():
+            count = tag.files.all().count()
+            print '%r: %d' % (tag, count)
+            if count <= 5:
+                print 'Removing %r' % tag
+                tag.delete()
+
     def get_tag(self, tags, type_, name):
+        if name[64:]:
+            print 'Skipping the creation of tag with long name: %r' % (
+                name)
+            return
+
         name = name.strip()
         tag = tags.get(name)
         if not tag:
@@ -42,8 +57,15 @@ class Command(base_command.CustomBaseCommand):
 
     def add_recursive(self, tag, directory):
         if tag:
+            if not tag.pk:
+                tag.save()
+
             tag.files.add(*models.File.objects.filter(
                 path__istartswith=directory.path))
+
+            if tag.files.all().count() <= 2:
+                print 20 * '#', 'Deleting tag %r' % tag
+                tag.delete()
 
     def handle_main_directory(self):
         main = models.File.objects.get(path=settings.DROPBOX_BASE_PATH)
@@ -54,8 +76,10 @@ class Command(base_command.CustomBaseCommand):
             match = re.search('\(([a-zA-Z]+ jaar)\)', directory.name)
             if match:
                 tag = self.get_tag(tags, tag_type, match.group(1))
+                if tag:
+                    self.add_recursive(tag, directory)
+
                 print 'Processing year %r: %s' % (directory, directory.path)
-                self.add_recursive(tag, directory)
                 self.handle_year_directory(directory)
 
     def handle_year_directory(self, year):
@@ -90,8 +114,8 @@ class Command(base_command.CustomBaseCommand):
                 self.handle_sub_directory(directory)
 
     def handle_sub_directory(self, sub_directory):
-        print 'Processing sub directory %r: %s' % (
-                sub_directory, sub_directory.path)
+        print 'Processing sub directory %r: %s' % (sub_directory,
+                                                   sub_directory.path)
 
         tag_type = self.get_tag_type('Directory')
         tags = models.Tag.as_dict()
