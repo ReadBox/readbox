@@ -10,7 +10,7 @@
         <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
         <script src="//d3nslu0hdya83q.cloudfront.net/dist/1.0/raven.min.js"></script>
         <script>
-        if(Raven){
+        if(typeof Raven !== 'undefined'){
             Raven.config('http://79d2f3bfe8224995bb8073d38101aaab@sentry.wol.ph/4', {
                 whitelistUrls: [/wol\.ph/]
             }).install();
