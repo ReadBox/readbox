@@ -1,5 +1,6 @@
 from django.conf.urls import patterns, include, url
 from readbox import api
+from django_utils import views
 
 # Uncomment the next two lines to enable the admin:
 from django.contrib import admin
@@ -23,4 +24,9 @@ urlpatterns = patterns(
 
     url(r'^oauth2/', include('provider.oauth2.urls', namespace='oauth2')),
 )
+
+handler400 = views.error_400
+handler403 = views.error_403
+handler404 = views.error_404
+handler500 = views.error_500
 
