@@ -10,18 +10,20 @@ try:
 except:
     from pickle import load
 
-from dropbox import rest
+from dropbox import rest, client
 from . import models
 
 logger = logging.getLogger(__name__)
 
+
 class Syncer(object):
     def __init__(self, client=None, force=True, threads=1):
         self.logger = logger.getChild(self.__class__.__name__)
-        if not client:
-            client = get_client()
+        if client:
+            self.client = client
+        else:
+            self.client = get_client()
 
-        self.client = client
         self.force = force
         self.pool = eventlet.GreenPool(threads)
         self.queue = eventlet.Queue()
@@ -154,7 +156,7 @@ class Syncer(object):
                 raise
 
             time.sleep(1)
-            return self.get_metadata(metadata, path, hash_, rev)
+            return self.get_metadata(metadata, path, hash_, rev, retry-1)
 
         self.logger.debug('Got updated metadata %r', metadata)
         return metadata
@@ -187,6 +189,5 @@ def get_client():
     with open(settings.DROPBOX_SESSION_FILE, 'rb') as fh:
         sess = load(fh)
 
-    from dropbox.client import DropboxClient
-    return DropboxClient(sess)
+    return client.DropboxClient(sess)
 
