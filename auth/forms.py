@@ -155,7 +155,9 @@ class PasswordForm(forms.Form):
     )
 
     def save(self, request, token):
-        token.user.set_password(self.cleaned_data['password'])
+        user = token.user
+        user.set_password(self.cleaned_data['password'])
+        user.save()
         user = auth.authenticate(
             token=token,
         )
