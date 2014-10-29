@@ -33,7 +33,7 @@ class EmailField(forms.EmailField):
         # Simple check if we got a proper domain
         assert '.' in domain
         self.domain = domain
-        super(EmailField, self).__init__(self, *args, **kwargs)
+        super(EmailField, self).__init__(*args, **kwargs)
 
     def to_python(self, value):
         if '@' not in value:
@@ -109,9 +109,9 @@ class LoginForm(forms.Form):
             user=self.user,
         )
         rendered_body = shortcuts.render_to_string(
-            'auth/email/activation_body.txt', context)
+            'auth2/email/activation_body.txt', context)
         rendered_subjet = shortcuts.render_to_string(
-            'auth/email/activation_subject.txt', context)
+            'auth2/email/activation_subject.txt', context)
 
         mail.send_mail(
             rendered_subjet,
@@ -125,9 +125,9 @@ class LoginForm(forms.Form):
             user=user,
         )
         rendered_body = shortcuts.render_to_string(
-            'auth/email/reset_body.txt', context)
+            'auth2/email/reset_body.txt', context)
         rendered_subjet = shortcuts.render_to_string(
-            'auth/email/reset_subject.txt', context)
+            'auth2/email/reset_subject.txt', context)
 
         mail.send_mail(
             rendered_subjet,

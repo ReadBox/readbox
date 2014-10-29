@@ -1,4 +1,5 @@
 import os
+import sys
 from django.db import models
 from django_utils import base_models, choices
 from django.conf import settings
@@ -122,7 +123,10 @@ class File(base_models.NameMixin, base_models.ModelBase):
     tags = models.ManyToManyField(Tag, related_name='files', null=True,
                                   blank=True)
     patterns = models.ManyToManyField(Pattern, null=True, blank=True)
-    child_count = denorm.CountField('children')
+    if sys.argv[1] in ('migrate', 'makemigrations'):
+        child_count = models.PositiveIntegerField()
+    else:
+        child_count = denorm.CountField('children')
 
     updated_at = models.DateTimeField()
     created_at = models.DateTimeField()
@@ -218,10 +222,10 @@ class File(base_models.NameMixin, base_models.ModelBase):
 
 class Permission(base_models.CreatedAtModelBase):
     user = models.ForeignKey(settings.AUTH_USER_MODEL)
-    read = models.BooleanField()
-    rename = models.BooleanField()
-    update = models.BooleanField()
-    delete = models.BooleanField()
+    read = models.BooleanField(default=False)
+    rename = models.BooleanField(default=False)
+    update = models.BooleanField(default=False)
+    delete = models.BooleanField(default=False)
     file = models.ForeignKey('file')
 
     class Meta:

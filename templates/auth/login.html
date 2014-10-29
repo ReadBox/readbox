@@ -2,8 +2,15 @@
 
 {% block body %}
 <div class="container" style="margin-top: 100px; max-width: 400px;">
+    <div class="panel panel-default panel-primary">
+        <div class="panel-heading">Login using your NetID</div>
+        <div class="panel-body">
+            <a href="{{ url('social:begin', backend='tudelft') }}" class="btn btn-success btn-block btn-lg">Login with your NetID</a>
+        </div>
+    </div>
+
     <div class="panel panel-default {% if form.errors %}panel-danger{% elif form.is_valid() and request.POST %}panel-success{% else %}panel-primary{% endif %}">
-        <div class="panel-heading">Login/Register</div>
+        <div class="panel-heading">Manual login/register</div>
         <div class="panel-body">
             <form method="post" class="form" action="{{ request.path }}">
                 <div class="form-group {% if form.errors.name %}has-error{% endif %}">

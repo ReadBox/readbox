@@ -22,7 +22,10 @@ urlpatterns = patterns(
     # Uncomment the next line to enable the admin:
     url(r'^admin/', include(admin.site.urls)),
 
-    url(r'^oauth2/', include('provider.oauth2.urls', namespace='oauth2')),
+    #url(r'^oauth2/', include('provider.oauth2.urls', namespace='oauth2')),
+    url(r'^oauth2/', include('auth.oauth2_urls', namespace='social')),
+    #url(r'^oauth2/', include('social.apps.django_app.urls',
+    #                         namespace='social')),
 )
 
 handler400 = views.error_400

@@ -114,12 +114,26 @@ MIDDLEWARE_CLASSES = (
     # Uncomment the next line for simple clickjacking protection:
     # 'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'denorm.middleware.DenormMiddleware',
+    #'oauth2_provider.middleware.OAuth2TokenMiddleware',
+    #'social.apps.django_app.middleware.SocialAuthExceptionMiddleware',
+    'auth.middleware.OAuth2Middleware',
 )
 
-#TEMPLATE_CONTEXT_PROCESSORS = (
-#    'django.core.context_processors.debug',
-#    'django.core.context_processors.i18n',
-#)
+TEMPLATE_CONTEXT_PROCESSORS = (
+    'django.contrib.auth.context_processors.auth',
+    'django.core.context_processors.debug',
+    'django.core.context_processors.i18n',
+    'django.core.context_processors.media',
+    'django.core.context_processors.static',
+    'django.core.context_processors.tz',
+    'django.core.context_processors.request',
+    'django.contrib.messages.context_processors.messages',
+
+    #'django.core.context_processors.debug',
+    #'django.core.context_processors.i18n',
+    'social.apps.django_app.context_processors.backends',
+    'social.apps.django_app.context_processors.login_redirect',
+)
 
 ROOT_URLCONF = 'urls'
 
@@ -134,7 +148,7 @@ TEMPLATE_DIRS = (
 )
 
 INSTALLED_APPS = (
-    'django.contrib.auth',
+    #'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.sites',
@@ -142,38 +156,44 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'django.contrib.admin',
     'django.contrib.admindocs',
-    'tastypie',
-    'south',
-    'provider',
-    'provider.oauth2',
+    #'tastypie',
+    #'south',
+    #'provider',
+    #'provider.oauth2',
     'readbox',
     'django_utils',
     'django_extensions',
     'coffin',
     'compressor',
     'tags_input',
-    'sorl.thumbnail',
-    'django_shell_ipynb',
+    #'sorl.thumbnail',
+    #'django_shell_ipynb',
     'denorm',
     'auth',
     'crispy_forms',
+    'social.apps.django_app.default',
 )
 
 AUTH_USER_MODEL = 'auth.ReadboxUser'
 AUTH_USER_EMAIL_DOMAIN = 'student.tudelft.nl'
 AUTHENTICATION_BACKENDS = (
+    'auth.tudelft.OAuth2Backend',
     'django.contrib.auth.backends.ModelBackend',
     'auth.backends.TokenBackend',
 )
+SOCIAL_AUTH_URL_NAMESPACE = 'social'
+
 ACCOUNT_ACTIVATION_DAYS = 7
 LOGIN_URL = 'login'
 LOGIN_REDIRECT_URL = 'index'
+
 LOGOUT_URL = 'logout'
 DEFAULT_FROM_EMAIL = 'wolph@wol.ph'
 BASE_URL = 'http://readbox.wol.ph'
 
 TOKEN_EXPIRATION_TIME = datetime.timedelta(days=7)
 
+TEST_RUNNER = 'django.test.runner.DiscoverRunner'
 
 CRISPY_TEMPLATE_PACK = 'bootstrap3'
 
@@ -241,23 +261,23 @@ LOGGING = {
 if 'runserver' in sys.argv:
     DEBUG = TEMPLATE_DEBUG = True
     DEVSERVER_DEFAULT_PORT = 8080
-    MIDDLEWARE_CLASSES += (
-        'debug_toolbar.middleware.DebugToolbarMiddleware',
-    )
-    DEBUG_TOOLBAR_PANELS = (
-        'debug_toolbar.panels.version.VersionDebugPanel',
-        'debug_toolbar.panels.timer.TimerDebugPanel',
-        'debug_toolbar.panels.settings_vars.SettingsVarsDebugPanel',
-        'debug_toolbar.panels.headers.HeaderDebugPanel',
-        'debug_toolbar.panels.request_vars.RequestVarsDebugPanel',
-        'debug_toolbar.panels.template.TemplateDebugPanel',
-        'debug_toolbar.panels.sql.SQLDebugPanel',
-        'debug_toolbar.panels.signals.SignalDebugPanel',
-        'debug_toolbar.panels.logger.LoggingPanel',
-    )
+    #MIDDLEWARE_CLASSES += (
+    #    'debug_toolbar.middleware.DebugToolbarMiddleware',
+    #)
+    #DEBUG_TOOLBAR_PANELS = (
+    #    'debug_toolbar.panels.version.VersionDebugPanel',
+    #    'debug_toolbar.panels.timer.TimerDebugPanel',
+    #    'debug_toolbar.panels.settings_vars.SettingsVarsDebugPanel',
+    #    'debug_toolbar.panels.headers.HeaderDebugPanel',
+    #    'debug_toolbar.panels.request_vars.RequestVarsDebugPanel',
+    #    'debug_toolbar.panels.template.TemplateDebugPanel',
+    #    'debug_toolbar.panels.sql.SQLDebugPanel',
+    #    'debug_toolbar.panels.signals.SignalDebugPanel',
+    #    'debug_toolbar.panels.logger.LoggingPanel',
+    #)
     INSTALLED_APPS += (
         'devserver',
-        'debug_toolbar',
+        #'debug_toolbar',
     )
     INTERCEPT_REDIRECTS = False
 
