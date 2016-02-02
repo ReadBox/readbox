@@ -2,18 +2,24 @@
 
 {% block body %}
 <div class="container" style="margin-top: 100px; max-width: 400px;">
+{#
     <div class="panel panel-default panel-primary">
         <div class="panel-heading">Login using your NetID</div>
         <div class="panel-body">
             <a href="{{ url('social:begin', backend='tudelft') }}" class="btn btn-success btn-block btn-lg">Login with your NetID</a>
         </div>
     </div>
+#}
 
     <div class="panel panel-default {% if form.errors %}panel-danger{% elif form.is_valid() and request.POST %}panel-success{% else %}panel-primary{% endif %}">
         <div class="panel-heading">Manual login/register</div>
         <div class="panel-body">
             <form method="post" class="form" action="{{ request.path }}">
                 <div class="form-group {% if form.errors.name %}has-error{% endif %}">
+                    <p class="help-block">You can choose <strong>any</strong> password during signup!<br>
+                    The email check is only to make sure you are a student.<br>
+                    This is not your NetID login, it's a completely separate system!</p>
+
                     {{ form.name.label_tag(attrs={'class': 'sr-only'}) }}
                     <div class="input-group" style="margin-bottom: 5px;">
                         {{ form.name.as_widget() }}
@@ -36,8 +42,6 @@
                     <div id="password-verdict" class="sr"></div>
                     <div id="password-errors" class="sr"></div>
 
-                    <p class="help-block">Note: You can choose any password during signup!<br>
-                    The email check is only to make sure you are a student.</p>
                     <p class="text-danger">Your Blackboard username is
                     generally <em>not</em> the same as your mail address!</p>
 
