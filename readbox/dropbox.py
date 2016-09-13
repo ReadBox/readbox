@@ -1,4 +1,5 @@
 from __future__ import absolute_import
+import sys
 import time
 import dateutil
 import datetime
@@ -150,6 +151,8 @@ class Syncer(object):
                 raise
 
             if not retry:
+                print 'LOCALS', locals()
+                print >>sys.stderr, 'LOCALS', locals()
                 self.logger.exception(
                     'Unable to fetch metadata for %r, %r, %r',
                     path, hash_, rev)

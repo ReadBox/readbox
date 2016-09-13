@@ -175,7 +175,7 @@ INSTALLED_APPS = (
 )
 
 AUTH_USER_MODEL = 'auth.ReadboxUser'
-AUTH_USER_EMAIL_DOMAIN = 'student.tudelft.nl'
+# AUTH_USER_EMAIL_DOMAIN = 'student.tudelft.nl'
 AUTHENTICATION_BACKENDS = (
     'auth.tudelft.OAuth2Backend',
     'django.contrib.auth.backends.ModelBackend',

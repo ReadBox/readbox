@@ -21,29 +21,33 @@ class BootstrapPasswordInput(BootstrapInput, forms.PasswordInput):
 
 
 class EmailField(forms.EmailField):
-    default_validators = forms.EmailField.default_validators + [
-        validators.RegexValidator(
-            regex='@%s$' % settings.AUTH_USER_EMAIL_DOMAIN,
-            message='Email addresses must end at %r'
-            % settings.AUTH_USER_EMAIL_DOMAIN,
-        ),
-    ]
+    default_validators = forms.EmailField.default_validators
 
-    def __init__(self, domain, *args, **kwargs):
-        # Simple check if we got a proper domain
-        assert '.' in domain
+    def __init__(self, domain=None, *args, **kwargs):
         self.domain = domain
+
+        if domain:
+            # Simple check if we got a proper domain
+            assert '.' in domain
+
+            self.default_validators += [
+                validators.RegexValidator(
+                    regex='@%s$' % domain,
+                    message='Email addresses must end at %r'
+                    % settings.AUTH_USER_EMAIL_DOMAIN,
+                ),
+            ]
         super(EmailField, self).__init__(*args, **kwargs)
 
     def to_python(self, value):
-        if '@' not in value:
+        if '@' not in value and self.domain:
             value = '%s@%s' % (value, self.domain)
         return value
 
 
 class LoginForm(forms.Form):
     name = EmailField(
-        domain=settings.AUTH_USER_EMAIL_DOMAIN,
+        domain=getattr(settings, 'AUTH_USER_EMAIL_DOMAIN', None),
         widget=BootstrapInput(attrs=dict(placeholder='Name')),
     )
     password = forms.CharField(

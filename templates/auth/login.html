@@ -16,17 +16,22 @@
         <div class="panel-body">
             <form method="post" class="form" action="{{ request.path }}">
                 <div class="form-group {% if form.errors.name %}has-error{% endif %}">
+                    {#
                     <p class="help-block">You can choose <strong>any</strong> password during signup!<br>
                     The email check is only to make sure you are a student.<br>
                     This is not your NetID login, it's a completely separate system!</p>
+                    #}
 
                     {{ form.name.label_tag(attrs={'class': 'sr-only'}) }}
-                    <div class="input-group" style="margin-bottom: 5px;">
+                    {% if form.name.field.domain %}
+                        <div class="input-group" style="margin-bottom: 5px;">
+                            {{ form.name.as_widget() }}
+                            <span class="input-group-addon">@{{ form.name.field.domain }}</span>
+                        </div>
+                    {% else %}
                         {{ form.name.as_widget() }}
-                        {% if form.name.field.domain %}
-                        <span class="input-group-addon">@{{ form.name.field.domain }}</span>
-                        {% endif %}
-                    </div>
+                    {% endif %}
+
                     {% if form.errors.name %}
                     <span class="help-block">
                         {{ form.errors.name.as_text() }}
@@ -42,8 +47,10 @@
                     <div id="password-verdict" class="sr"></div>
                     <div id="password-errors" class="sr"></div>
 
+                    {#
                     <p class="text-danger">Your Blackboard username is
                     generally <em>not</em> the same as your mail address!</p>
+                    #}
 
                     {% if form.errors.password %}
                     <span class="help-block">
